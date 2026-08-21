@@ -1,0 +1,279 @@
+source: DRAFT - Ram Rod Utilities, LLC (2.18.25) v2.xlsx
+mappings:
+- statement: BS
+  client_account: Current Assets
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: Bank Accounts
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: 10000 Business Adv Relationship - 0558 - 4 (deleted)
+  template_line: Due From Related Parties
+  sign: 1
+- statement: BS
+  client_account: 10000 Business Adv Relationship - 0558 - 4 (deleted)
+  template_line: Contract Assets
+  sign: 1
+- statement: BS
+  client_account: 10001 Business Adv Relationship - 1232 - 4 (deleted)
+  template_line: Retainage Receivable
+  sign: 1
+- statement: BS
+  client_account: 10002 Business Advantage Say - 1290 - 4 (deleted)
+  template_line: Costs in Excess of Billings
+  sign: 1
+- statement: BS
+  client_account: Fixed Assets
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: 15300 Machinery & Equipment
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: 15310 Tools, machinery, and equipment
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Total 15300 Machinery & Equipment
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Total Fixed Assets
+  template_line: Net Fixed Assets
+  sign: 1
+- statement: BS
+  client_account: Total Current Assets
+  template_line: Right of Use Assets
+  sign: 1
+- statement: BS
+  client_account: Liabilities
+  template_line: Accounts Payable & Accrued Exp.
+  sign: 1
+- statement: BS
+  client_account: Current Liabilities
+  template_line: Accounts Payable & Accrued Exp.
+  sign: 1
+- statement: BS
+  client_account: Credit Cards
+  template_line: Billings in Excess of Costs
+  sign: 1
+- statement: BS
+  client_account: TOTAL ASSETS
+  template_line: Capital Lease, Current
+  sign: 1
+- statement: BS
+  client_account: 21000 Credit Card Loans
+  template_line: Long-Term Debt, Current
+  sign: 1
+- statement: BS
+  client_account: Current Liabilities
+  template_line: Capital Lease Liability
+  sign: 1
+- statement: BS
+  client_account: Total 21000 Credit Card Loans
+  template_line: Long-Term Debt
+  sign: 1
+- statement: BS
+  client_account: 24000 Payroll Liabilities
+  template_line: Total Equity
+  sign: 1
+- statement: IS
+  client_account: 40000 Services
+  template_line: Revenue
+  sign: 1
+- statement: IS
+  client_account: 50004 Supplies & materials - COGS
+  template_line: Cost of Revenue
+  sign: 1
+- statement: IS
+  client_account: Expenses
+  template_line: SG&A Expenses
+  sign: 1
+- statement: IS
+  client_account: Net Income
+  template_line: Depreciation Expense
+  sign: 1
+- statement: IS
+  client_account: 63100 General business expenses
+  template_line: Other Income (Expense)
+  sign: 1
+- statement: IS
+  client_account: 63101 Bank fees & service charges
+  template_line: Interest  Income/(Expense)
+  sign: 1
+- statement: IS
+  client_account: 30000 Owner Investment
+  template_line: Capital Expenditures
+  sign: -1
+- statement: IS
+  client_account: 15500 Furniture & fixtures
+  template_line: Distributions (Net)
+  sign: -1
+targets:
+  BS::Cash & Cash Equivalents:
+  - Current Assets
+  BS::Accounts Receivable:
+  - Bank Accounts
+  BS::Due From Related Parties:
+  - 10000 Business Adv Relationship - 0558 - 4 (deleted)
+  BS::Contract Assets:
+  - 10000 Business Adv Relationship - 0558 - 4 (deleted)
+  BS::Retainage Receivable:
+  - 10001 Business Adv Relationship - 1232 - 4 (deleted)
+  BS::Costs in Excess of Billings:
+  - 10002 Business Advantage Say - 1290 - 4 (deleted)
+  BS::Total Fixed Assets (Gross):
+  - Fixed Assets
+  - 15300 Machinery & Equipment
+  - 15310 Tools, machinery, and equipment
+  BS::Accumulated Depreciation:
+  - Total 15300 Machinery & Equipment
+  BS::Net Fixed Assets:
+  - Total Fixed Assets
+  BS::Right of Use Assets:
+  - Total Current Assets
+  BS::Accounts Payable & Accrued Exp.:
+  - Liabilities
+  - Current Liabilities
+  BS::Billings in Excess of Costs:
+  - Credit Cards
+  BS::Capital Lease, Current:
+  - TOTAL ASSETS
+  BS::Long-Term Debt, Current:
+  - 21000 Credit Card Loans
+  BS::Capital Lease Liability:
+  - Current Liabilities
+  BS::Long-Term Debt:
+  - Total 21000 Credit Card Loans
+  BS::Total Equity:
+  - 24000 Payroll Liabilities
+  IS::Revenue:
+  - 40000 Services
+  IS::Cost of Revenue:
+  - 50004 Supplies & materials - COGS
+  IS::SG&A Expenses:
+  - Expenses
+  IS::Depreciation Expense:
+  - Net Income
+  IS::Other Income (Expense):
+  - 63100 General business expenses
+  IS::Interest  Income/(Expense):
+  - 63101 Bank fees & service charges
+  IS::Capital Expenditures:
+  - 30000 Owner Investment
+  IS::Distributions (Net):
+  - 15500 Furniture & fixtures
+year_variant_mappings:
+- statement: BS
+  template_line: Cash & Cash Equivalents
+  variants:
+    I:
+    - Total Bank Accounts (+)
+    J:
+    - Current Assets (+)
+    K:
+    - Current Assets (+)
+- statement: BS
+  template_line: Due From Related Parties
+  variants:
+    I:
+    - Total 23000 Loans Payable (-)
+    J:
+    - 10001 Business Adv Relationship - 1232 - 4 (deleted) (+)
+    K:
+    - 10000 Business Adv Relationship - 0558 - 4 (deleted) (+)
+- statement: BS
+  template_line: Accounts Payable & Accrued Exp.
+  variants:
+    I:
+    - Total 24000 Payroll Liabilities (+)
+    - Total Credit Cards (+)
+    J:
+    - Total Fixed Assets (+)
+    K:
+    - Current Liabilities (+)
+    - Liabilities (+)
+- statement: BS
+  template_line: Total Equity
+  variants:
+    I:
+    - Total Equity (+)
+    J:
+    - 21000 Credit Card Loans (+)
+    K:
+    - 24000 Payroll Liabilities (+)
+- statement: IS
+  template_line: Revenue
+  variants:
+    I:
+    - Total for Income (+)
+    K:
+    - 40000 Services (+)
+- statement: IS
+  template_line: Cost of Revenue
+  variants:
+    I:
+    - Total for Cost of Goods Sold (+)
+    J:
+    - Income (-)
+    K:
+    - 50004 Supplies & materials - COGS (+)
+- statement: IS
+  template_line: SG&A Expenses
+  variants:
+    I:
+    - Total for Expenses (+)
+    J:
+    - 41000 Sales (+)
+    K:
+    - Expenses (+)
+- statement: IS
+  template_line: Depreciation Expense
+  variants:
+    J:
+    - 11100 Accounts Receivable (A/R) (+)
+    K:
+    - Net Income (+)
+- statement: IS
+  template_line: Other Income (Expense)
+  variants:
+    I:
+    - Total for Other Expenses (-)
+    K:
+    - 63100 General business expenses (+)
+- statement: IS
+  template_line: Interest  Income/(Expense)
+  variants:
+    I:
+    - 80200 Interest earned (+)
+    J:
+    - Total for Income (-)
+    K:
+    - 63101 Bank fees & service charges (+)
+- statement: IS
+  template_line: Capital Expenditures
+  variants:
+    I:
+    - 15310 Machinery & Equipment:Tools, machinery, and equipment (+)
+    - 15500 Furniture & fixtures (+)
+    J:
+    - INVESTING ACTIVITIES (-)
+    K:
+    - 30000 Owner Investment (-)
+- statement: IS
+  template_line: Distributions (Net)
+  variants:
+    J:
+    - 34000 Partner distributions (-)
+    K:
+    - 15500 Furniture & fixtures (-)
+contested_accounts:
+  10000 Business Adv Relationship - 0558 - 4 (deleted):
+  - Contract Assets
+  - Due From Related Parties
+  Current Liabilities:
+  - Accounts Payable & Accrued Exp.
+  - Capital Lease Liability

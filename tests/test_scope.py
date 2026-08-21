@@ -329,3 +329,67 @@ def test_a_fully_established_period_reports_nothing():
     ss.add(col(statement=StatementType.BS, year=2023, end=date(2023, 12, 31)))
     ss.add(col(statement=StatementType.IS, year=2023, end=date(2023, 12, 31), months=12))
     assert check_period_coverage(ss) == []
+
+
+# --------------------------------------------------------------------------
+# statement type: recognising what we deliberately do not model
+# --------------------------------------------------------------------------
+
+from fsa.ingest.interpret import _is_default_name, _is_not_modelled
+
+
+@pytest.mark.parametrize(
+    "title",
+    [
+        "Statement of Cash Flows",
+        "STATEMENT OF CASH FLOWS",
+        "Statements of Cash Flow",
+        "Cash Flow Statement",
+        "Statement of Changes in Members' Equity",
+        "Statement of Stockholders Equity",
+        "Statement of Retained Earnings",
+    ],
+)
+def test_statements_we_do_not_model_are_recognised(title):
+    """Recognising a cash flow statement is what lets us ignore one.
+
+    Client four sends one file per statement, and a cash flow statement opens
+    with `Net Income` -- the same fallback marker as an income statement. Read
+    as an income statement it won FY2022 outright, because `CF` sorts before
+    `IS`. The fix is not to model cash flows; it is to know one when we see it.
+    """
+    assert _is_not_modelled(title)
+
+
+@pytest.mark.parametrize(
+    "title",
+    [
+        "Balance Sheet",
+        "Profit and Loss",
+        "Income Statement",
+        "Statement of Operations",
+        "Statement of Financial Position",
+        "Net Income",
+        "Cash and cash equivalents",
+        "Total Cash",
+    ],
+)
+def test_statements_we_do_model_are_untouched(title):
+    assert not _is_not_modelled(title)
+
+
+@pytest.mark.parametrize("name", ["Sheet1", "Sheet 2", "sheet", "p1", "p12", "Tabelle1", "", None])
+def test_a_default_tab_name_is_provenance_not_a_reporting_scope(name):
+    """`Sheet1` names nobody.
+
+    Recording it as an entity made two halves of one Profit and Loss look like
+    rival scopes: `merge_pages` refused to join them because they carried
+    entities, and `select_scope` then discarded one -- dropping twenty rows of
+    a statement that was never split in the first place.
+    """
+    assert _is_default_name(name)
+
+
+@pytest.mark.parametrize("name", ["consolidated", "US", "Bermuda", "Canada", "HoldCo", "Profit and Loss"])
+def test_a_named_tab_is_kept_as_a_scope(name):
+    assert not _is_default_name(name)

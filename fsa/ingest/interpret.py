@@ -60,6 +60,22 @@ _TITLES: list[tuple[re.Pattern, StatementType]] = [
     (re.compile(r"\bstatement\s+of\s+(?:operations|income|earnings)\b", re.I), StatementType.IS),
 ]
 
+#: Statements this tool deliberately does not model. Recognising them is not
+#: the same as supporting them: a cash flow statement opens with `Net Income`,
+#: which is also the fallback marker for an income statement, so without this a
+#: client's FY2022 cash flows are read *as* their income statement -- and on a
+#: client who sends one file per statement it can win the year outright.
+#:
+#: There are three primary financial statements and this list closes the set;
+#: it is domain vocabulary, not any one client's wording.
+_NOT_MODELLED = re.compile(
+    r"\b(statements?\s+of\s+cash\s*flows?|cash\s*flows?\s+statements?|"
+    r"statements?\s+of\s+(changes\s+in\s+)?(stockholders?|shareholders?|"
+    r"members?|owners?|partners?)[’']?\s*(equity|capital)|"
+    r"statements?\s+of\s+retained\s+earnings|statements?\s+of\s+equity)\b",
+    re.I,
+)
+
 #: Fallback when a document carries no title line: the outermost row of each
 #: statement is highly stereotyped.
 _BODY_MARKERS: list[tuple[re.Pattern, StatementType]] = [
@@ -77,6 +93,10 @@ def _title_of(text: str) -> StatementType | None:
     return None
 
 
+def _is_not_modelled(text: str) -> bool:
+    return bool(_NOT_MODELLED.search(text or ""))
+
+
 def _marker_of(text: str) -> StatementType | None:
     for pat, st in _BODY_MARKERS:
         if pat.match(text or ""):
@@ -92,6 +112,17 @@ def _rows_hash(rows: list[RawRow]) -> str:
     for r in rows:
         h.update(f"{r.label}|{r.depth}|{r.values}\n".encode())
     return h.hexdigest()[:16]
+
+
+#: Names a tool gives a sheet when nobody named it: Excel's `Sheet1`, its
+#: localised forms, and this reader's own `p1`/`p2` page labels.
+_DEFAULT_NAME = re.compile(
+    r"^\s*(sheet|tabelle|hoja|feuille|foglio|blad|list|p)\s*\d*\s*$", re.I
+)
+
+
+def _is_default_name(name: str | None) -> bool:
+    return not name or bool(_DEFAULT_NAME.match(name))
 
 
 @dataclass
@@ -130,15 +161,26 @@ def _segment(part: RawPart) -> list[_Segment]:
     fall back to its captions (the PDF case, where the masthead is separated
     out by the reader).
     """
-    cuts: list[tuple[int, StatementType]] = []
+    cuts: list[tuple[int, StatementType | None]] = []
     for i, r in enumerate(part.rows):
-        st = _title_of(r.label or "")
+        label = r.label or ""
+        if _is_not_modelled(label):
+            # A cut with no statement: everything from here to the next title
+            # belongs to a statement we do not model, and is discarded below.
+            cuts.append((i, None))
+            continue
+        st = _title_of(label)
         if st is not None:
             cuts.append((i, st))
 
     if not cuts:
         st = next((s for c in part.captions if (s := _title_of(c))), None)
         if st is None:
+            # Only reach for the body markers once the part has been cleared of
+            # statements we do not model -- `Net Income` is the first line of a
+            # cash flow statement as well as the last line of an income one.
+            if any(_is_not_modelled(c) for c in part.captions):
+                return []
             st = next((s for r in part.rows if (s := _marker_of(r.label or ""))), None)
         if st is None:
             return []
@@ -147,6 +189,8 @@ def _segment(part: RawPart) -> list[_Segment]:
 
     out: list[_Segment] = []
     for n, (start, st) in enumerate(cuts):
+        if st is None:
+            continue
         end = cuts[n + 1][0] if n + 1 < len(cuts) else len(part.rows)
         rows = part.rows[start:end]
         # The period caption sits within a few lines of the title.
@@ -446,10 +490,14 @@ def interpret(
                     label_column="label",
                     period_end=seg.period.end,
                     period_months=seg.period.months,
-                    # A worksheet tab is usually a reporting scope -- sample 3
+                    # A worksheet tab is often a reporting scope -- sample 3
                     # splits `consolidated` from `US`, `Canada` and `Bermuda`.
-                    # A PDF page is not; `p1`/`p2` are pagination, not entities.
-                    entity=part.name if doc.kind != "pdf" else None,
+                    # A *default* tab name is not: `Sheet1` and `p2` are
+                    # provenance. Recording them as entities made two halves of
+                    # one Profit and Loss look like rival scopes, so they
+                    # contested the year instead of being joined and half the
+                    # statement was dropped.
+                    entity=None if _is_default_name(part.name) else part.name,
                     rows=rows,
                 )
             )
