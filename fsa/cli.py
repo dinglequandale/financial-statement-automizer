@@ -178,8 +178,23 @@ def _cmd_prepare(args: argparse.Namespace) -> int:
         if res.n_unresolved_subtotal
         else "\n"
     )
-    out.write(f"\nNext: open {res.review_path}\n")
-    out.write("      correct column D, save, then run `build`.\n")
+    # The technical detail lives in findings.json; what reaches the terminal
+    # is what a person can act on (`fsa.explain`).
+    from fsa.explain import render_text, summarize
+
+    summary = summarize(res.report)
+    rendered = render_text(summary)
+    if rendered.strip():
+        out.write(rendered + "\n")
+
+    if summary.ok:
+        out.write(f"\nNext: open {res.review_path}\n")
+        out.write("      correct column D, save, then run `build`.\n")
+    else:
+        out.write(
+            f"\nThe review sheet was still written ({res.review_path}) so you can see"
+            f"\nwhat was read, but resolve the items above before building a model.\n"
+        )
 
     # Errors are worth a non-zero exit for scripting, but the review workbook is
     # still written -- an unbalanced year is exactly what a human needs to see.

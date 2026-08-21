@@ -9,15 +9,38 @@ checklist. You approve or correct it; only then does anything get written.
 
 ---
 
-## Install
+## For analysts: the window
+
+Two double-clicks, once each:
+
+1. **`Install.cmd`** — run this one time. It sets everything up and tells you
+   what to do if Python is missing.
+2. **`Launch Automizer.cmd`** — this is the tool. Use it every time.
+
+The window asks for four things: the client's name, the folder holding whatever
+they sent, the blank BVAL template, and — on a repeat client — last year's saved
+decisions. Then it reads the statements, opens the review sheet in Excel, and
+writes the model once you have corrected column D.
+
+Everything it produces goes in `Documents\BVAL Models\<client>\<date>`. You
+never have to choose a folder.
+
+**It stops rather than guesses.** If a year's figures do not add up, if one
+period covers eight months instead of twelve, or if a file holds several
+companies and it cannot tell which one you are valuing, it says so in plain
+English and refuses to build. That is the point: a model you cannot trust is
+worse than no model.
+
+---
+
+## For everyone else: the command line
 
 ```
 pip install -e .
 ```
 
-That installs an `fsa` command, so every example below can be typed as
-`fsa prepare ...` instead of `python -m fsa.cli prepare ...`. (`pip install -r
-requirements.txt` still works if you would rather not install the package.)
+That installs an `fsa` command. (`pip install -r requirements.txt` still works
+if you would rather not install the package; then use `python -m fsa.cli`.)
 
 If `fsa` is not found afterwards, Python's Scripts directory is not on your
 PATH — a common default on Windows. Either add it, or keep using
@@ -32,7 +55,7 @@ is filled through Excel itself, never through a Python library, because the
 template's formulas do not survive a round trip through `openpyxl`. Ingest,
 mapping and review work anywhere.
 
-For the LLM mapping step, put your key in a `.env` file next to this README:
+For the suggestion step, put your key in a `.env` file next to this README:
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...

@@ -22,6 +22,8 @@ dev = ["pytest>=8.0"]
 [project.scripts]
 # So an analyst types `fsa prepare ...` rather than `python -m fsa.cli prepare ...`
 fsa = "fsa.cli:main"
+# The window, for analysts. Same engine, no command line.
+fsa-gui = "fsa.gui:main"
 
 [tool.setuptools.packages.find]
 include = ["fsa*"]
