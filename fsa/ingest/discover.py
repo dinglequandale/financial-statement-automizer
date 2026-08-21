@@ -103,6 +103,56 @@ def find_statement_sheet(wb: Workbook, statement: StatementType) -> str | None:
     return None
 
 
+#: How far into a sheet a statement's own masthead can reasonably sit.
+_TITLE_SCAN_ROWS = 12
+_TITLE_SCAN_COLS = 6
+
+
+def _sheet_by_content(wb: Workbook, statement: StatementType) -> str | None:
+    """Ask the sheet what it is, when its name does not say.
+
+    **Deliberately not wired in.** Written for client five, whose six-year
+    balance sheet lives on a tab called `19 24 BS` that no name rule matches.
+    It works, and it is the right idea -- but routing a sheet here changes which
+    *path* a file takes, and the multi-column extractor is wrong for the
+    single-period documents clients three and four send: turning it on emptied
+    Ram Rod's balance sheets entirely and doubled AOK Holdings' to 132 rows.
+    Choosing between the two paths by content is the real fix and it belongs
+    with multi-period support, not bolted on ahead of it.
+
+    A tab name is whatever the person exporting it typed. Client five calls a
+    six-year balance sheet `19 24 BS`, which matches no name rule and so was
+    never found at all -- five of its six years vanished silently. Growing the
+    name list (`bs`, `p&l`, `pl`, `stmt`...) is the treadmill; the sheet itself
+    prints `Balance Sheet` in its second row, and `interpret` already knows how
+    to read a statement title. Reuse that rather than invent a vocabulary.
+    """
+    from fsa.ingest.interpret import _is_not_modelled, _title_of
+
+    for name in wb.sheetnames:
+        ws = wb[name]
+        rows = min(ws.max_row or 0, _TITLE_SCAN_ROWS)
+        cols = min(ws.max_column or 0, _TITLE_SCAN_COLS)
+        for r in range(1, rows + 1):
+            for c in range(1, cols + 1):
+                v = ws.cell(row=r, column=c).value
+                if not isinstance(v, str) or not v.strip():
+                    continue
+                if _is_not_modelled(v):
+                    # A cash flow or equity statement; nothing here for us.
+                    break
+                found = _title_of(v)
+                if found is not None:
+                    # The first title a sheet declares is what that sheet is.
+                    if found is statement:
+                        return name
+                    break
+            else:
+                continue
+            break
+    return None
+
+
 def _clean_str(value: object) -> str | None:
     if value is None:
         return None
@@ -128,6 +178,17 @@ def _parse_date_cell(value: object) -> date | None:
                 return datetime.strptime(s, fmt).date()
             except ValueError:
                 continue
+        # Then the parser every other date in this system goes through, rather
+        # than a fifth strptime format. Client five heads its year columns
+        # `Dec 31, 19` -- a two-digit year none of the formats above accept --
+        # so its six comparative columns were invisible and five of its six
+        # years were dropped without a word. `parse_period` already knew that
+        # shape, including which century a two-digit year belongs to.
+        from fsa.ingest.raw import parse_period
+
+        period = parse_period(s)
+        if period is not None:
+            return period.end
     return None
 
 

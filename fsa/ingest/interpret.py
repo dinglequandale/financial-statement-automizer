@@ -36,6 +36,7 @@ Three things here are not obvious:
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -133,6 +134,10 @@ class _Segment:
     period: Period | None
     captions: list[str]
 
+
+#: Share of a segment's valued rows that must agree on how many figures they
+#: carry before it counts as a period grid rather than a ragged layout.
+_GRID_UNIFORMITY = 0.7
 
 #: A real statement always closes with at least one total, and carries more
 #: than a couple of figures.
@@ -420,6 +425,42 @@ def interpret(
                         statement=seg.statement,
                         fiscal_year=seg.period.fiscal_year,
                         detail={"months": seg.period.months, "end": str(seg.period.end)},
+                    )
+                )
+
+            # A document that carries several periods per row is a multi-year
+            # export, and this layer reads one period per segment: it takes the
+            # first value on each row and drops the rest. That is silent data
+            # loss of exactly the kind nothing downstream can detect -- the one
+            # column read ties every subtotal perfectly, so the arithmetic gate
+            # passes it. Client five ships a six-year Profit and Loss this way.
+            # Uniformity is the evidence, not the maximum. A real period grid
+            # gives almost every valued row the same number of figures --
+            # client five's six-year Profit and Loss is 7 columns on 102 of 102
+            # rows. A messy single-period layout is ragged: AOK Holdings scatters
+            # 2, 3, 4 and 5 figures across different rows and means one period by
+            # all of them, so keying on the widest row accused it 27 times.
+            counts = Counter(
+                len([v for v in r.values if v is not None]) for r in seg.rows
+            )
+            counts.pop(0, None)
+            valued = sum(counts.values())
+            widest, modal_rows = counts.most_common(1)[0] if counts else (0, 0)
+            if widest > 1 and valued and modal_rows / valued >= _GRID_UNIFORMITY:
+                findings.append(
+                    Finding(
+                        severity=Severity.WARNING,
+                        code="multi_column_source",
+                        message=(
+                            f"{doc.source.name}::{part.name}: this "
+                            f"{seg.statement.value} lays out {widest} columns of "
+                            f"figures and only the first was read. If those columns "
+                            f"are years, the rest have been dropped; if they are "
+                            f"entities or a working schedule, nothing is missing."
+                        ),
+                        statement=seg.statement,
+                        fiscal_year=seg.period.fiscal_year,
+                        detail={"columns": widest},
                     )
                 )
 

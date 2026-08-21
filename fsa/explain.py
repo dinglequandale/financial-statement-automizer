@@ -82,6 +82,15 @@ EXPLANATIONS: dict[str, Explanation] = {
         "judgement call for the engagement rather than something to assume.",
         "Supply statements already translated into a single currency.",
     ),
+    "multi_column_source": Explanation(
+        "A file lays out several columns and only the first was read",
+        "If those columns are years, the others have been dropped and nothing "
+        "else will catch it -- the year that was read adds up perfectly on its "
+        "own. If they are entities or a working schedule, nothing is missing. "
+        "The tool cannot yet tell the two apart.",
+        "Check the column headings in the file named above. If they are dates "
+        "or years, split it so each year is its own file and run again.",
+    ),
     "period_unreadable": Explanation(
         "A statement does not say what period it covers",
         "Without a date we cannot tell which year the figures belong to, and "

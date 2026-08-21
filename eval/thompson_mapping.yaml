@@ -1,0 +1,696 @@
+source: Draft - Thompson Custom Homes (8.31.2025) v2.xlsx
+mappings:
+- statement: BS
+  client_account: Total Checking/Savings
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: Total Accounts Receivable
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: "18200 \x97 Computers & Equipmen"
+  template_line: Computers & Software
+  sign: 1
+- statement: BS
+  client_account: "18240 \x97 Software"
+  template_line: Computers & Software
+  sign: 1
+- statement: BS
+  client_account: "18190 \x97 Office Equipment"
+  template_line: Computers & Software
+  sign: 1
+- statement: BS
+  client_account: "18100 \x97 Office Furn"
+  template_line: Furniture & Fixtures
+  sign: 1
+- statement: BS
+  client_account: "18300 \x97 Vehicles"
+  template_line: Vehicles
+  sign: 1
+- statement: BS
+  client_account: "18400 \x97 Leasehold Improvemen"
+  template_line: Leasehold Improvements
+  sign: 1
+- statement: BS
+  client_account: "19100 \x97 Accumulated Deprecia"
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: "13000 \x97 WIP"
+  template_line: Work-in-Progress
+  sign: 1
+- statement: BS
+  client_account: "15081 \x97 Luis Raminez"
+  template_line: Notes Receivable
+  sign: 1
+- statement: BS
+  client_account: "15110 \x97 Brian Thompson"
+  template_line: Notes Receivable
+  sign: 1
+- statement: BS
+  client_account: "28800 \x97 N/P - 2018 Chevy Express"
+  template_line: Notes Receivable
+  sign: -1
+- statement: BS
+  client_account: "12000 \x97 Investment - Simple Fix Ho..."
+  template_line: Investments
+  sign: 1
+- statement: BS
+  client_account: Total Accounts Payable
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: Total Credit Cards
+  template_line: Credit Card Payable
+  sign: 1
+- statement: BS
+  client_account: "24000QB \x97 Payroll Liabilities_QB"
+  template_line: Payroll Liabilities
+  sign: 1
+- statement: BS
+  client_account: "25040 \x97 Payroll Liability"
+  template_line: Payroll Liabilities
+  sign: 1
+- statement: BS
+  client_account: "25060 \x97 Payroll Liab."
+  template_line: Payroll Liabilities
+  sign: 1
+- statement: BS
+  client_account: "26150 \x97 Retirement Plan Payable"
+  template_line: Payroll Liabilities
+  sign: 1
+- statement: BS
+  client_account: "23210 \x97 Morgan Stanley LOC"
+  template_line: Line of Credit
+  sign: 1
+- statement: BS
+  client_account: "28800 \x97 N/P - 2018 Chevy Expres..."
+  template_line: Long-Term Debt
+  sign: 1
+- statement: BS
+  client_account: "28100 \x97 Due Others-Stockhold"
+  template_line: Due to Stocholders
+  sign: 1
+- statement: BS
+  client_account: Total Equity
+  template_line: Total Equity
+  sign: 1
+- statement: IS
+  client_account: Total Income
+  template_line: Revenue
+  sign: 1
+- statement: IS
+  client_account: "41350 \x97 Other Income"
+  template_line: Revenue
+  sign: -1
+- statement: IS
+  client_account: Total COGS
+  template_line: Cost of Revenue
+  sign: 1
+- statement: IS
+  client_account: "60500 \x97 Payroll Expenses"
+  template_line: Total Payroll & Benefit Expenses
+  sign: 1
+- statement: IS
+  client_account: "60550 \x97 Payroll Expenses-SUT"
+  template_line: Total Payroll & Benefit Expenses
+  sign: 1
+- statement: IS
+  client_account: "66000QB \x97 Payroll Expenses_QB"
+  template_line: Total Payroll & Benefit Expenses
+  sign: 1
+- statement: IS
+  client_account: "Total 60150 \x97 Insurance"
+  template_line: Insurance
+  sign: 1
+- statement: IS
+  client_account: "60265 \x97 Office Clean"
+  template_line: Office Maintenance & Supplies
+  sign: 1
+- statement: IS
+  client_account: "60266 \x97 Office Maintenance"
+  template_line: Office Maintenance & Supplies
+  sign: 1
+- statement: IS
+  client_account: "60270 \x97 Office Rental"
+  template_line: Office Maintenance & Supplies
+  sign: 1
+- statement: IS
+  client_account: "60285 \x97 Office Outing"
+  template_line: Office Maintenance & Supplies
+  sign: 1
+- statement: IS
+  client_account: "60290 \x97 Office Supplies"
+  template_line: Office Maintenance & Supplies
+  sign: 1
+- statement: IS
+  client_account: "60451 \x97 Warehouse Stock"
+  template_line: Warehouse Stock & Cleaning
+  sign: 1
+- statement: IS
+  client_account: "60455 \x97 Clean"
+  template_line: Warehouse Stock & Cleaning
+  sign: 1
+- statement: IS
+  client_account: Total Pro Fees
+  template_line: Professional Fees
+  sign: 1
+- statement: IS
+  client_account: "60270 \x97 Office Rental"
+  template_line: Office Rental
+  sign: 1
+- statement: IS
+  client_account: "Total 60020 \x97 Auto Expense"
+  template_line: Auto Expense
+  sign: 1
+- statement: IS
+  client_account: "60250 \x97 Meals"
+  template_line: Meals & Entertainment
+  sign: 1
+- statement: IS
+  client_account: "60253 \x97 Entertainment"
+  template_line: Meals & Entertainment
+  sign: 1
+- statement: IS
+  client_account: "60080 \x97 Communications - Cel"
+  template_line: Communications & Cell
+  sign: 1
+- statement: IS
+  client_account: "60420 \x97 Taxes"
+  template_line: Property & Franchise Taxes
+  sign: 1
+- statement: IS
+  client_account: "60419 \x97 Property Taxes"
+  template_line: Property & Franchise Taxes
+  sign: 1
+- statement: IS
+  client_account: Total Expense
+  template_line: Operating Expenses
+  sign: 1
+- statement: IS
+  client_account: "60120 \x97 Depreciation Expense"
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: "41350 \x97 Other Income"
+  template_line: Other Income (Expense)
+  sign: 1
+- statement: IS
+  client_account: "49000 \x97 Gain on Sale of Asse"
+  template_line: Gain on Sale of Assets
+  sign: 1
+- statement: IS
+  client_account: "49010 \x97 Interest Income"
+  template_line: Interest Income
+  sign: 1
+- statement: IS
+  client_account: "60220 \x97 Interest Expense"
+  template_line: Interest (Expense)
+  sign: -1
+- statement: IS
+  client_account: "60420 \x97 Taxes"
+  template_line: Federal Income Taxes
+  sign: 1
+- statement: IS
+  client_account: Net Income
+  template_line: Net Income Reconciliation
+  sign: 1
+targets:
+  BS::Cash & Cash Equivalents:
+  - Total Checking/Savings
+  BS::Accounts Receivable:
+  - Total Accounts Receivable
+  BS::Computers & Software:
+  - "18200 \x97 Computers & Equipmen"
+  - "18240 \x97 Software"
+  - "18190 \x97 Office Equipment"
+  BS::Furniture & Fixtures:
+  - "18100 \x97 Office Furn"
+  BS::Vehicles:
+  - "18300 \x97 Vehicles"
+  BS::Leasehold Improvements:
+  - "18400 \x97 Leasehold Improvemen"
+  BS::Accumulated Depreciation:
+  - "19100 \x97 Accumulated Deprecia"
+  BS::Work-in-Progress:
+  - "13000 \x97 WIP"
+  BS::Notes Receivable:
+  - "15081 \x97 Luis Raminez"
+  - "15110 \x97 Brian Thompson"
+  - "28800 \x97 N/P - 2018 Chevy Express"
+  BS::Investments:
+  - "12000 \x97 Investment - Simple Fix Ho..."
+  BS::Accounts Payable:
+  - Total Accounts Payable
+  BS::Credit Card Payable:
+  - Total Credit Cards
+  BS::Payroll Liabilities:
+  - "24000QB \x97 Payroll Liabilities_QB"
+  - "25040 \x97 Payroll Liability"
+  - "25060 \x97 Payroll Liab."
+  - "26150 \x97 Retirement Plan Payable"
+  BS::Line of Credit:
+  - "23210 \x97 Morgan Stanley LOC"
+  BS::Long-Term Debt:
+  - "28800 \x97 N/P - 2018 Chevy Expres..."
+  BS::Due to Stocholders:
+  - "28100 \x97 Due Others-Stockhold"
+  BS::Total Equity:
+  - Total Equity
+  IS::Revenue:
+  - Total Income
+  - "41350 \x97 Other Income"
+  IS::Cost of Revenue:
+  - Total COGS
+  IS::Total Payroll & Benefit Expenses:
+  - "60500 \x97 Payroll Expenses"
+  - "60550 \x97 Payroll Expenses-SUT"
+  - "66000QB \x97 Payroll Expenses_QB"
+  IS::Insurance:
+  - "Total 60150 \x97 Insurance"
+  IS::Office Maintenance & Supplies:
+  - "60265 \x97 Office Clean"
+  - "60266 \x97 Office Maintenance"
+  - "60270 \x97 Office Rental"
+  - "60285 \x97 Office Outing"
+  - "60290 \x97 Office Supplies"
+  IS::Warehouse Stock & Cleaning:
+  - "60451 \x97 Warehouse Stock"
+  - "60455 \x97 Clean"
+  IS::Professional Fees:
+  - Total Pro Fees
+  IS::Office Rental:
+  - "60270 \x97 Office Rental"
+  IS::Auto Expense:
+  - "Total 60020 \x97 Auto Expense"
+  IS::Meals & Entertainment:
+  - "60250 \x97 Meals"
+  - "60253 \x97 Entertainment"
+  IS::Communications & Cell:
+  - "60080 \x97 Communications - Cel"
+  IS::Property & Franchise Taxes:
+  - "60420 \x97 Taxes"
+  - "60419 \x97 Property Taxes"
+  IS::Operating Expenses:
+  - Total Expense
+  IS::Depreciation:
+  - "60120 \x97 Depreciation Expense"
+  IS::Other Income (Expense):
+  - "41350 \x97 Other Income"
+  IS::Gain on Sale of Assets:
+  - "49000 \x97 Gain on Sale of Asse"
+  IS::Interest Income:
+  - "49010 \x97 Interest Income"
+  IS::Interest (Expense):
+  - "60220 \x97 Interest Expense"
+  IS::Federal Income Taxes:
+  - "60420 \x97 Taxes"
+  IS::Net Income Reconciliation:
+  - Net Income
+year_variant_mappings:
+- statement: BS
+  template_line: Computers & Software
+  variants:
+    E:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    F:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    G:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    H:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    I:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    J:
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+    K:
+    - "18190 \x97 Office Equipment (+)"
+    - "18200 \x97 Computers & Equipmen (+)"
+    - "18240 \x97 Software (+)"
+- statement: BS
+  template_line: Vehicles
+  variants:
+    E:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    F:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    G:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    H:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    I:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    J:
+    - "18175 \x97 BT Ford 2021 Raptor (+)"
+    - "18300 \x97 Vehicles (+)"
+    K:
+    - "18300 \x97 Vehicles (+)"
+- statement: BS
+  template_line: Notes Receivable
+  variants:
+    E:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28100 \x97 Due Others-Stockhold (-)"
+    F:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28100 \x97 Due Others-Stockhold (-)"
+    G:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28100 \x97 Due Others-Stockhold (-)"
+    H:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28100 \x97 Due Others-Stockhold (-)"
+    I:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    J:
+    - "15020 \x97 N/R ER (+)"
+    - "15081 \x97 Luis Raminez (+)"
+    - "15082 \x97 N/R Keren Cordero (+)"
+    - "15096 \x97 N/P Ryan Towns (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28800 \x97 N/P - 2018 Chevy Expres... (-)"
+    K:
+    - "15081 \x97 Luis Raminez (+)"
+    - "15110 \x97 Brian Thompson (+)"
+    - "28800 \x97 N/P - 2018 Chevy Express (-)"
+- statement: BS
+  template_line: Payroll Liabilities
+  variants:
+    E:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    F:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    G:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    H:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    I:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    J:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25030 \x97 Payroll SOC (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25050 \x97 Payroll MED (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26020 \x97 Wrkrs Comp Dflt Acct (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+    K:
+    - "24000QB \x97 Payroll Liabilities_QB (+)"
+    - "25040 \x97 Payroll Liability (+)"
+    - "25060 \x97 Payroll Liab. (+)"
+    - "26150 \x97 Retirement Plan Payable (+)"
+- statement: IS
+  template_line: Revenue
+  variants:
+    E:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    F:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    G:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    H:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    I:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    J:
+    - "41350 \x97 Other Income (-)"
+    - "49000 \x97 Gain on Sale of Asse (-)"
+    - "49010 \x97 Interest Income (-)"
+    - Total Income (+)
+    K:
+    - "41350 \x97 Other Income (-)"
+    - Total Income (+)
+- statement: IS
+  template_line: Total Payroll & Benefit Expenses
+  variants:
+    E:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    F:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    G:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    H:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    I:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    J:
+    - "60141 \x97 Contractor Benefits (+)"
+    - "60510 \x97 Payroll Expenses-FIC (+)"
+    - "60515 \x97 Payroll Simple Fix (+)"
+    - "60520 \x97 Payroll Expenses-FUT (+)"
+    - "60540 \x97 Payroll Expenses-MED (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "60580 \x97 Officer Health Insurance (+)"
+    - "61000 \x97 401k & PSP (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+    - "Total 60500 \x97 Payroll Expenses (+)"
+    K:
+    - "60500 \x97 Payroll Expenses (+)"
+    - "60550 \x97 Payroll Expenses-SUT (+)"
+    - "66000QB \x97 Payroll Expenses_QB (+)"
+- statement: IS
+  template_line: Office Maintenance & Supplies
+  variants:
+    E:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    F:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    G:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    H:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    I:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    J:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60280 \x97 Office Repair & Main (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+    K:
+    - "60265 \x97 Office Clean (+)"
+    - "60266 \x97 Office Maintenance (+)"
+    - "60270 \x97 Office Rental (+)"
+    - "60285 \x97 Office Outing (+)"
+    - "60290 \x97 Office Supplies (+)"
+- statement: IS
+  template_line: Communications & Cell
+  variants:
+    E:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    F:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    G:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    H:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    I:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    J:
+    - "60080 \x97 Communications - Cel (+)"
+    - "60081 \x97 Communications - Off (+)"
+    K:
+    - "60080 \x97 Communications - Cel (+)"
+- statement: IS
+  template_line: Operating Expenses
+  variants:
+    E:
+    - "60120 \x97 Depreciation Expense (-)"
+    - "60220 \x97 Interest Expense (-)"
+    - "60420 \x97 Taxes (-)"
+    - Total Expense (+)
+    F:
+    - "60120 \x97 Depreciation Expense (-)"
+    - "60220 \x97 Interest Expense (-)"
+    - "60420 \x97 Taxes (-)"
+    - Total Expense (+)
+    G:
+    - Total Expense (+)
+    H:
+    - Total Expense (+)
+    I:
+    - Total Expense (+)
+    J:
+    - Total Expense (+)
+    K:
+    - Total Expense (+)
+- statement: IS
+  template_line: Net Income Reconciliation
+  variants:
+    E:
+    - Net Income (+)
+    F:
+    - Net Income (+)
+    G:
+    - Net Income (+)
+    H:
+    - Net Income (+)
+    I:
+    - Net Income (+)
+    J:
+    - Net Income (+)
+    K:
+    - Net Income (+)
+contested_accounts:
+  "60420 \x97 Taxes":
+  - Federal Income Taxes
+  - Property & Franchise Taxes
+  "41350 \x97 Other Income":
+  - Other Income (Expense)
+  - Revenue
+  "60270 \x97 Office Rental":
+  - Office Maintenance & Supplies
+  - Office Rental
