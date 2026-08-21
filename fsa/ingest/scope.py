@@ -369,3 +369,84 @@ def check_period_coverage(ss: StatementSet) -> list[Finding]:
             )
         )
     return findings
+
+
+def check_denomination(ss: StatementSet) -> list[Finding]:
+    """Refuse figures this tool cannot write as reported.
+
+    Two failures, neither of which any arithmetic can see. A statement stated
+    in thousands ties every subtotal and balances every year; so does a column
+    of Canadian dollars added to a group reporting in US dollars. The only
+    evidence is the line of small type above the columns, which is why the
+    declaration is part of a column's identity rather than a formatting detail.
+
+    The response is refusal, not conversion. Rescaling would mean this tool
+    silently changing the client's figures, and translating would mean picking
+    an exchange rate -- a valuation judgement, made per engagement, by an
+    analyst. Both cost one question. Guessing either costs a valuation.
+    """
+    findings: list[Finding] = []
+    primary = [c for c in ss.columns if c.role is ColumnRole.PRIMARY]
+
+    stated = [c for c in primary if c.scale != 1]
+    if stated:
+        worst = stated[0]
+        years = ", ".join(
+            f"{c.statement.value} FY{c.fiscal_year}"
+            for c in sorted(stated, key=lambda x: (x.statement.value, x.fiscal_year))
+        )
+        findings.append(
+            Finding(
+                severity=Severity.ERROR,
+                code="scale_not_as_reported",
+                message=(
+                    f"figures are stated in {worst.scale_label} ({years}). This tool "
+                    f"writes figures exactly as the client reported them and does not "
+                    f"rescale, so the model would be out by a factor of "
+                    f"{worst.scale:,}. Supply statements stated in whole units, or "
+                    f"rescale them before running."
+                ),
+                statement=worst.statement,
+                fiscal_year=worst.fiscal_year,
+                detail={"scale": worst.scale, "label": worst.scale_label},
+            )
+        )
+
+    by_stmt: dict[StatementType, list[ExtractedColumn]] = {}
+    for c in primary:
+        by_stmt.setdefault(c.statement, []).append(c)
+
+    for st, cols in by_stmt.items():
+        scales = {c.scale for c in cols}
+        if len(scales) > 1:
+            findings.append(
+                Finding(
+                    severity=Severity.ERROR,
+                    code="scale_mixed",
+                    message=(
+                        f"{st.value}: years are not stated in the same units "
+                        f"({sorted(scales)}). Comparing or trending them would be "
+                        f"wrong by orders of magnitude, and every subtotal still "
+                        f"ties, so nothing else will catch it."
+                    ),
+                    statement=st,
+                )
+            )
+
+        currencies = {c.currency for c in cols if c.currency}
+        if len(currencies) > 1:
+            findings.append(
+                Finding(
+                    severity=Severity.ERROR,
+                    code="currency_mixed",
+                    message=(
+                        f"{st.value}: figures are reported in more than one currency "
+                        f"({', '.join(sorted(currencies))}). Translating them is a "
+                        f"valuation judgement and an exchange rate this tool does not "
+                        f"have -- supply statements already translated to one currency."
+                    ),
+                    statement=st,
+                    detail={"currencies": sorted(currencies)},
+                )
+            )
+    return findings

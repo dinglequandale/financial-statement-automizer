@@ -41,6 +41,7 @@ from pathlib import Path
 
 from fsa.ingest.normalize import is_derived_line, is_total_label, normalize
 from fsa.ingest.raw import Period, RawDoc, RawPart, RawRow, parse_period
+from fsa.ingest.units import detect_currency, detect_scale, masthead
 from fsa.model.schema import (
     AccountRow,
     CellRef,
@@ -422,6 +423,10 @@ def interpret(
                     )
                 )
 
+            head = masthead(seg.captions, seg.rows) + [doc.source.stem]
+            _scale, _scale_label = detect_scale(head)
+            _currency = detect_currency(head)
+
             rows: list[AccountRow] = []
             used: dict[str, str | None] = {}
             for raw, kind, section in _classify(seg.rows):
@@ -498,6 +503,9 @@ def interpret(
                     # contested the year instead of being joined and half the
                     # statement was dropped.
                     entity=None if _is_default_name(part.name) else part.name,
+                    scale=_scale,
+                    scale_label=_scale_label,
+                    currency=_currency,
                     rows=rows,
                 )
             )

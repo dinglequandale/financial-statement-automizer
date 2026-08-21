@@ -113,6 +113,15 @@ class ExtractedColumn:
     #: consolidated group. Sheet-level provenance, filled in wherever the
     #: source separates entities; None when the source does not.
     entity: str | None = None
+    #: What the figures are denominated in. `scale` is the multiplier the
+    #: client declared (1 = as reported, 1000 = stated in thousands) and
+    #: `currency` an ISO code where one is stated. Both are part of a column's
+    #: identity for the same reason its period is: figures denominated
+    #: differently cannot be compared or summed, and nothing in the arithmetic
+    #: gives it away -- a statement in thousands ties every subtotal perfectly.
+    scale: int = 1
+    scale_label: str | None = None
+    currency: str | None = None
     rows: list[AccountRow] = field(default_factory=list)
 
     @property

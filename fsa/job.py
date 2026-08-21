@@ -119,6 +119,7 @@ def ingest(
     from fsa.ingest.interpret import interpret, read_any
     from fsa.ingest.raw import UnreadableSource
     from fsa.ingest.scope import (
+        check_denomination,
         check_period_basis,
         check_period_coverage,
         infer_missing_period_ends,
@@ -182,6 +183,7 @@ def ingest(
     findings.extend(infer_missing_period_ends(ss))
     findings.extend(check_period_basis(ss))
     findings.extend(check_period_coverage(ss))
+    findings.extend(check_denomination(ss))
     return ss, findings
 
 
