@@ -67,13 +67,27 @@ def read(path: Path) -> RawDoc:
 
 
 def _cell_kind(value: object) -> str | None:
-    """Classify one cell's cached value: "text", "numeric", or None (other)."""
-    if isinstance(value, str):
-        return "text" if value.strip() else None
+    """Classify one cell's cached value: "text", "numeric", or None (other).
+
+    A figure written as text is still a figure. Accountants put a dollar sign
+    on the first and last number of a statement, and a PDF-to-Excel conversion
+    routinely lands that whole thing -- `$ 3,072,405` -- in one cell as a
+    string. Client four's audited income statements are exactly this shape, so
+    revenue and net income were classified as prose and dropped, while every
+    line between them read normally. `_to_number` already knew how to read
+    them; nothing ever asked it.
+
+    Only strings `_to_number` can read become numeric, so an account label is
+    never mistaken for an amount.
+    """
     if isinstance(value, bool):
         return None
     if isinstance(value, (int, float)):
         return "numeric"
+    if isinstance(value, str):
+        if not value.strip():
+            return None
+        return "numeric" if _to_number(value) is not None else "text"
     return None
 
 

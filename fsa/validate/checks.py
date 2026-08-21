@@ -7,7 +7,7 @@ module must discriminate between.
 
 from __future__ import annotations
 
-from fsa.ingest.normalize import is_derived_line, similarity
+from fsa.ingest.normalize import normalize, is_derived_line, similarity
 from fsa.model.schema import (
     AccountRow,
     ColumnRole,
@@ -50,15 +50,33 @@ def _fmt(x: float | None) -> str:
 
 
 def subtotal_mismatch(column: ExtractedColumn) -> list[Finding]:
-    """WARNING: a client *block* subtotal != sum of its DATA rows (tol 0.01).
+    """WARNING: a client block subtotal does not equal what it totals.
 
-    Only block subtotals -- those directly preceded by at least one valued DATA
-    row -- are checked. A subtotal with no DATA rows since the previous subtotal
-    is a derived line (grand total, margin, profit line) whose formula is
-    layout-specific: "Total Assets" = TCA + TFA + TOA, "Gross Margin" = revenue
-    minus COGS, "Net Profit/Loss" nets several blocks. Guessing at those
-    produces confident-sounding false positives, which is worse than silence --
-    so we say nothing about them.
+    A flat spreadsheet carries no indentation, so a subtotal's scope has to be
+    inferred. "Everything since the previous subtotal" is the obvious guess and
+    it is wrong on any nested statement: a standalone expense sitting between
+    two groups gets charged to whichever group comes next. Client four showed
+    this exactly -- `Total for 64000 Legal & accounting services` reported at
+    8,140 against a "sum" of 24,025, the gap being one insurance line printed
+    above the group that has nothing to do with it.
+
+    Two structural readings are tried before anything is reported, both drawn
+    from the client's own document rather than from any vocabulary:
+
+    1. **The subtotal names its own scope.** QuickBooks writes `Total for 63100
+       General business expenses` directly beneath the header `63100 General
+       business expenses`. When a subtotal's label contains a header printed
+       above it, that header is where its block begins -- which is a fact the
+       document states, not a heuristic.
+
+    2. **A subtotal may total other subtotals.** `Total Liabilities` is current
+       liabilities plus long-term ones; `Total Liabilities and Members' Equity`
+       adds equity to that. Summing only loose data rows charges such a line
+       with a fraction of itself.
+
+    Only a subtotal that satisfies neither reading is reported. Derived lines
+    (`Gross Margin`, `Net Income`) are still skipped entirely: their formulas
+    net whole blocks and guessing at them produces confident false positives.
     """
     # When the source encodes nesting, `check_hierarchy` supersedes this and
     # this one becomes actively wrong: "sum everything since the last subtotal"
@@ -70,38 +88,104 @@ def subtotal_mismatch(column: ExtractedColumn) -> list[Finding]:
     if any(r.depth is not None for r in column.rows):
         return []
 
+    rows = list(column.rows)
     findings: list[Finding] = []
+
+    # Every row a later subtotal could be naming as its parent. Headers are the
+    # usual case, but a parent account can carry its own balance and then reads
+    # as data: client four posts 200.86 directly to `66000 Payroll expenses`
+    # and totals it together with its five children.
+    headers: list[tuple[int, str]] = [
+        (i, normalize(r.raw_label))
+        for i, r in enumerate(rows)
+        if r.kind in (RowKind.SECTION_HEADER, RowKind.DATA)
+        and (r.raw_label or "").strip()
+    ]
+
+    def named_scope(at: int, label: str) -> int | None:
+        """Where the block this subtotal names begins, if it names one."""
+        norm = normalize(label)
+        best: int | None = None
+        for i, header in headers:
+            if i >= at or not header:
+                continue
+            # `total for 63100 general business expenses` contains
+            # `63100 general business expenses`.
+            if header in norm and header != norm:
+                best = i
+        return best
+
+    def sum_data(lo: int, hi: int) -> tuple[float, int]:
+        total, n = 0.0, 0
+        for r in rows[lo:hi]:
+            if r.kind is RowKind.DATA and r.value is not None:
+                total += r.value
+                n += 1
+        return total, n
+
     running_sum = 0.0
     valued_data_rows = 0
-    for row in column.rows:
+    # Subtotals available for a parent to roll up. A subtotal that reconciles
+    # *replaces* the ones beneath it, because a parent totals the child once,
+    # not the child and its own components. Kept strictly local: an unbounded
+    # pool charges a late subtotal with the whole statement.
+    beneath: list[float] = []
+
+    for at, row in enumerate(rows):
         if row.kind is RowKind.DATA:
             if row.value is not None:
                 running_sum += row.value
                 valued_data_rows += 1
-        elif row.kind is RowKind.SUBTOTAL:
-            if (
-                valued_data_rows > 0
-                and row.value is not None
-                and not is_derived_line(row.raw_label)
-                and not _close(running_sum, row.value)
-            ):
-                findings.append(
-                    Finding(
-                        severity=Severity.WARNING,
-                        code="subtotal_mismatch",
-                        message=(
-                            f"subtotal '{row.raw_label}' = {_fmt(row.value)} "
-                            f"but components sum to {_fmt(running_sum)}"
-                        ),
-                        statement=column.statement,
-                        fiscal_year=column.fiscal_year,
-                        account=row.raw_label,
-                        ref=row.ref,
-                        detail={"expected": running_sum, "actual": row.value},
+            continue
+        if row.kind is not RowKind.SUBTOTAL:
+            continue
+
+        matched = True
+        # `valued_data_rows > 0` is the original precondition and stays exactly
+        # as it was: a subtotal with no data rows since the previous one is a
+        # derived line whose formula nets whole blocks, and judging it produces
+        # confident false positives. The readings added below can only ever
+        # exonerate a subtotal, never accuse one that was previously ignored.
+        if (
+            row.value is not None
+            and valued_data_rows > 0
+            and not is_derived_line(row.raw_label)
+        ):
+            candidates: list[float] = [running_sum]
+
+            start_at = named_scope(at, row.raw_label)
+            if start_at is not None:
+                scoped, n = sum_data(start_at, at)
+                if n > 0:
+                    candidates.append(scoped)
+
+            if beneath:
+                candidates.append(sum(beneath) + running_sum)
+
+            if True:
+                matched = any(_close(c, row.value) for c in candidates)
+                if not matched:
+                    closest = min(candidates, key=lambda c: abs(c - row.value))
+                    findings.append(
+                        Finding(
+                            severity=Severity.WARNING,
+                            code="subtotal_mismatch",
+                            message=(
+                                f"subtotal '{row.raw_label}' = {_fmt(row.value)} "
+                                f"but components sum to {_fmt(closest)}"
+                            ),
+                            statement=column.statement,
+                            fiscal_year=column.fiscal_year,
+                            account=row.raw_label,
+                            ref=row.ref,
+                            detail={"expected": closest, "actual": row.value},
+                        )
                     )
-                )
-            running_sum = 0.0
-            valued_data_rows = 0
+
+        if row.value is not None:
+            beneath = [row.value] if matched else beneath + [row.value]
+        running_sum = 0.0
+        valued_data_rows = 0
     return findings
 
 
