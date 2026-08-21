@@ -1,0 +1,98 @@
+# Held-out period-caption corpus.
+#
+# Written BEFORE running any parser against it, and derived from financial
+# reporting conventions rather than from the three sample clients -- the point
+# is to measure generalization, not to re-score captions we have already seen.
+#
+# Scoring contract per item:
+#   end          expected period end (ISO). null == the caption does not
+#                determine a period and any confident answer is WRONG.
+#   months       expected period length. null == point-in-time or not stated;
+#                only checked when non-null.
+#   must_abstain true when returning any period at all is a silent failure.
+#
+# Three outcomes per item:
+#   correct       matched `end` (and `months` where given)
+#   abstained     returned nothing -- safe, costs the analyst a question
+#   silent_wrong  returned a period that does not match -- the failure that
+#                 reaches a delivered model
+#
+# `seen: true` marks a form that actually occurs in samples 1-3, so in-sample
+# and out-of-sample performance can be reported separately.
+
+captions:
+
+  # -- Standard point-in-time balance sheet headings -------------------------
+  - {text: "As of December 31, 2024",              end: 2024-12-31, months: null, seen: true,  category: as_of}
+  - {text: "As of Dec 31, 2023",                   end: 2023-12-31, months: null, seen: true,  category: as_of}
+  - {text: "Dec 31, 25",                           end: 2025-12-31, months: null, seen: true,  category: as_of}
+  - {text: "December 31, 2022",                    end: 2022-12-31, months: null, seen: true,  category: as_of}
+  - {text: "Balance Sheet as of 12/31/2024",       end: 2024-12-31, months: null, seen: false, category: as_of}
+  - {text: "As at 31 December 2024",               end: 2024-12-31, months: null, seen: false, category: as_of}
+  - {text: "Statement of Financial Position - December 31, 2024", end: 2024-12-31, months: null, seen: false, category: as_of}
+
+  # -- Non-December fiscal year ends ----------------------------------------
+  - {text: "As of June 30, 2024",                  end: 2024-06-30, months: null, seen: false, category: fiscal_ye}
+  - {text: "Year Ended June 30, 2024",             end: 2024-06-30, months: 12,   seen: false, category: fiscal_ye}
+  - {text: "FYE 6/30/24",                          end: 2024-06-30, months: 12,   seen: false, category: fiscal_ye}
+  - {text: "Fiscal Year Ended March 31, 2025",     end: 2025-03-31, months: 12,   seen: false, category: fiscal_ye}
+  - {text: "For the year ended September 30, 2023", end: 2023-09-30, months: 12,  seen: false, category: fiscal_ye}
+  - {text: "As of January 31, 2025",               end: 2025-01-31, months: null, seen: false, category: fiscal_ye}
+
+  # -- Full-year income statement headings ----------------------------------
+  - {text: "January through December 2025",        end: 2025-12-31, months: 12,   seen: true,  category: full_year}
+  - {text: "Jan - Dec 24",                         end: 2024-12-31, months: 12,   seen: true,  category: full_year}
+  - {text: "For the Year Ended December 31, 2023", end: 2023-12-31, months: 12,   seen: false, category: full_year}
+  - {text: "Twelve Months Ended December 31, 2024", end: 2024-12-31, months: 12,  seen: false, category: full_year}
+  - {text: "Profit and Loss January through December 2022", end: 2022-12-31, months: 12, seen: true, category: full_year}
+
+  # -- Stub / partial periods (must NOT be read as full years) ---------------
+  - {text: "January through August 2025",          end: 2025-08-31, months: 8,    seen: true,  category: stub}
+  - {text: "Jan - Aug 25",                         end: 2025-08-31, months: 8,    seen: true,  category: stub}
+  - {text: "Eight Months Ended August 31, 2025",   end: 2025-08-31, months: 8,    seen: false, category: stub}
+  - {text: "Six Months Ended June 30, 2024",       end: 2024-06-30, months: 6,    seen: false, category: stub}
+  - {text: "For the period January 1 to August 31, 2025", end: 2025-08-31, months: 8, seen: false, category: stub}
+  - {text: "Period Ended June 30, 2024",           end: 2024-06-30, months: null, seen: false, category: stub}
+  - {text: "Nine Months Ended September 30, 2024", end: 2024-09-30, months: 9,    seen: false, category: stub}
+
+  # -- Trailing twelve months (12 months, but NOT a fiscal year end) ---------
+  - {text: "TTM Ended March 31, 2025",             end: 2025-03-31, months: 12,   seen: false, category: ttm}
+  - {text: "Trailing Twelve Months Ended March 31, 2025", end: 2025-03-31, months: 12, seen: false, category: ttm}
+  - {text: "LTM 3/31/2025",                        end: 2025-03-31, months: 12,   seen: false, category: ttm}
+  - {text: "TTM March 2025",                       end: 2025-03-31, months: 12,   seen: true,  category: ttm}
+  - {text: "Mary TTM 2025",                        end: null,       months: null, seen: true,  must_abstain: true, category: ttm, note: "corrupt filename; year alone cannot fix the end date"}
+
+  # -- Year to date ----------------------------------------------------------
+  - {text: "YTD through September 2024",           end: 2024-09-30, months: 9,    seen: false, category: ytd}
+  - {text: "Year to Date as of March 31, 2025",    end: 2025-03-31, months: 3,    seen: false, category: ytd}
+  - {text: "ProfitandLoss - 12.31.21 YTD",         end: 2021-12-31, months: 12,   seen: true,  category: ytd}
+
+  # -- Quarters --------------------------------------------------------------
+  - {text: "Q3 2024",                              end: 2024-09-30, months: 3,    seen: false, category: quarter}
+  - {text: "Three Months Ended September 30, 2024", end: 2024-09-30, months: 3,   seen: false, category: quarter}
+  - {text: "Second Quarter 2025",                  end: 2025-06-30, months: 3,    seen: false, category: quarter}
+
+  # -- Ambiguous: a month is named but no day; must NOT become December ------
+  - {text: "March 2025",                           end: 2025-03-31, months: null, seen: true,  category: ambiguous}
+  - {text: "consolidated balance sheet - March 2025", end: 2025-03-31, months: null, seen: true, category: ambiguous}
+  - {text: "August 2024",                          end: 2024-08-31, months: null, seen: false, category: ambiguous}
+
+  # -- Genuinely undetermined: any confident period is a silent failure ------
+  - {text: "2025",                                 end: null, months: null, seen: true,  must_abstain: true, category: bare}
+  - {text: "FY2023",                               end: null, months: null, seen: true,  must_abstain: true, category: bare, note: "fiscal year end unknown without the client's year-end convention"}
+  - {text: "2024 Financials",                      end: null, months: null, seen: true,  must_abstain: true, category: bare}
+
+  # -- Not periods at all: must never parse ---------------------------------
+  - {text: "Balance Sheet",                        end: null, months: null, seen: true,  must_abstain: true, category: non_period}
+  - {text: "Prepared by Smithson & Co LLP",        end: null, months: null, seen: false, must_abstain: true, category: non_period}
+  - {text: "Page 3 of 12",                         end: null, months: null, seen: false, must_abstain: true, category: non_period}
+  - {text: "Account 1200 - Operating Cash",        end: null, months: null, seen: false, must_abstain: true, category: non_period}
+  - {text: "Total Current Assets",                 end: null, months: null, seen: true,  must_abstain: true, category: non_period}
+  - {text: "Unaudited - See Accountant's Report",  end: null, months: null, seen: false, must_abstain: true, category: non_period}
+
+  # -- Adversarial: a real date, but not an actual reporting period ----------
+  - {text: "2025 Budget",                          end: null, months: null, seen: false, must_abstain: true, category: adversarial, note: "budget, not actual -- must not become a historical column"}
+  - {text: "FY25 Forecast",                        end: null, months: null, seen: false, must_abstain: true, category: adversarial}
+  - {text: "Printed 11/04/2025 at 3:42 PM",        end: null, months: null, seen: false, must_abstain: true, category: adversarial, note: "print timestamp, not a reporting period"}
+  - {text: "Restated 2023",                        end: null, months: null, seen: false, must_abstain: true, category: adversarial}
+  - {text: "Comparative: 2023 and 2024",           end: null, months: null, seen: false, must_abstain: true, category: adversarial, note: "two periods; a single answer is wrong either way"}

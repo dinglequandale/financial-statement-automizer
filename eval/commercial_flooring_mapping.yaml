@@ -1,0 +1,399 @@
+source: Draft Schedules - Commercial Flooring, Inc. (12.31.25)v2.xlsx
+mappings:
+- statement: BS
+  client_account: Total Checking/Savings
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: Total Accounts Receivable
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: Total Other Current Assets
+  template_line: Other Current Assets
+  sign: 1
+- statement: BS
+  client_account: Autos and Trucks
+  template_line: Autos & Trucks
+  sign: 1
+- statement: BS
+  client_account: Furniture and Equipment
+  template_line: Furniture & Fixtures
+  sign: 1
+- statement: BS
+  client_account: Machinery and Equipment
+  template_line: Equipment
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Security Deposits
+  template_line: Security Deposits
+  sign: 1
+- statement: BS
+  client_account: Accounts Payable
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: Total Credit Cards
+  template_line: Credit Cards
+  sign: 1
+- statement: BS
+  client_account: Retainage
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: Total Equity
+  template_line: Total Equity
+  sign: 1
+- statement: IS
+  client_account: Job Income
+  template_line: Revenue
+  sign: 1
+- statement: IS
+  client_account: Total COGS
+  template_line: Cost of Revenue
+  sign: 1
+- statement: IS
+  client_account: Payroll Expenses
+  template_line: Payroll Expense
+  sign: 1
+- statement: IS
+  client_account: Payroll Taxes
+  template_line: Payroll Expense
+  sign: 1
+- statement: IS
+  client_account: Retirement Account
+  template_line: Retirement Account Expense
+  sign: 1
+- statement: IS
+  client_account: Rent Expense
+  template_line: Rent
+  sign: 1
+- statement: IS
+  client_account: Professional Fees - Acct/Legal
+  template_line: Professional Fees
+  sign: 1
+- statement: IS
+  client_account: Professional Fees - Appraisals
+  template_line: Professional Fees
+  sign: 1
+- statement: IS
+  client_account: Total Insurance Expense
+  template_line: Insurance
+  sign: 1
+- statement: IS
+  client_account: Taxes-Franchise
+  template_line: Franchise & Property Taxes
+  sign: 1
+- statement: IS
+  client_account: Taxes - Property
+  template_line: Franchise & Property Taxes
+  sign: 1
+- statement: IS
+  client_account: Repairs and Maintenance
+  template_line: Repairs & Maintenance
+  sign: 1
+- statement: IS
+  client_account: Total Expense
+  template_line: Other Operating Expenses
+  sign: 1
+- statement: IS
+  client_account: Other Income
+  template_line: Other Income (Expense)
+  sign: 1
+- statement: IS
+  client_account: Proceeds from Sale of Assets
+  template_line: Proceeds from Sale of Asset
+  sign: 1
+- statement: IS
+  client_account: Other Income Schwab *Div
+  template_line: Interest Income & Dividends
+  sign: 1
+- statement: IS
+  client_account: Interest Income
+  template_line: Interest Income & Dividends
+  sign: 1
+- statement: IS
+  client_account: Net Income
+  template_line: Recon with Net Inc Per Books
+  sign: -1
+targets:
+  BS::Cash & Cash Equivalents:
+  - Total Checking/Savings
+  BS::Accounts Receivable:
+  - Total Accounts Receivable
+  BS::Other Current Assets:
+  - Total Other Current Assets
+  BS::Autos & Trucks:
+  - Autos and Trucks
+  BS::Furniture & Fixtures:
+  - Furniture and Equipment
+  BS::Equipment:
+  - Machinery and Equipment
+  BS::Accumulated Depreciation:
+  - Accumulated Depreciation
+  BS::Security Deposits:
+  - Security Deposits
+  BS::Accounts Payable:
+  - Accounts Payable
+  BS::Credit Cards:
+  - Total Credit Cards
+  BS::Other Payables:
+  - Retainage
+  BS::Total Equity:
+  - Total Equity
+  IS::Revenue:
+  - Job Income
+  IS::Cost of Revenue:
+  - Total COGS
+  IS::Payroll Expense:
+  - Payroll Expenses
+  - Payroll Taxes
+  IS::Retirement Account Expense:
+  - Retirement Account
+  IS::Rent:
+  - Rent Expense
+  IS::Professional Fees:
+  - Professional Fees - Acct/Legal
+  - Professional Fees - Appraisals
+  IS::Insurance:
+  - Total Insurance Expense
+  IS::Franchise & Property Taxes:
+  - Taxes-Franchise
+  - Taxes - Property
+  IS::Repairs & Maintenance:
+  - Repairs and Maintenance
+  IS::Other Operating Expenses:
+  - Total Expense
+  IS::Other Income (Expense):
+  - Other Income
+  IS::Proceeds from Sale of Asset:
+  - Proceeds from Sale of Assets
+  IS::Interest Income & Dividends:
+  - Other Income Schwab *Div
+  - Interest Income
+  IS::Recon with Net Inc Per Books:
+  - Net Income
+year_variant_mappings:
+- statement: BS
+  template_line: Security Deposits
+  variants:
+    F:
+    - Security Deposits (+)
+    G:
+    - Total Other Assets (+)
+    H:
+    - Security Deposits (+)
+    I:
+    - Security Deposits (+)
+    J:
+    - Security Deposits (+)
+    K:
+    - Security Deposits (+)
+- statement: BS
+  template_line: Accounts Payable
+  variants:
+    F:
+    - Total Accounts Payable (+)
+    G:
+    - Total Accounts Payable (+)
+    H:
+    - Total Accounts Payable (+)
+    I:
+    - Accounts Payable (+)
+    J:
+    - Total Accounts Payable (+)
+    K:
+    - Accounts Payable (+)
+- statement: BS
+  template_line: Other Payables
+  variants:
+    F:
+    - Total Other Current Liabilities (+)
+    G:
+    - Total Other Current Liabilities (+)
+    H:
+    - Total Other Current Liabilities (+)
+    I:
+    - Total Other Current Liabiliti... (+)
+    J:
+    - Total Other Current Liabili... (+)
+    K:
+    - Retainage (+)
+- statement: IS
+  template_line: Professional Fees
+  variants:
+    G:
+    - Professional Fees - Acct/Legal (+)
+    H:
+    - Professional Fees - Acct/Legal (+)
+    I:
+    - Professional Fees - Acct/Legal (+)
+    J:
+    - Professional Fees - Acct/Legal (+)
+    K:
+    - Professional Fees - Acct/Legal (+)
+    - Professional Fees - Appraisals (+)
+- statement: IS
+  template_line: Franchise & Property Taxes
+  variants:
+    F:
+    - Taxes - Property (+)
+    - Taxes-Franchise (+)
+    G:
+    - Taxes-Franchise (+)
+    H:
+    - Taxes - Property (+)
+    - Taxes-Franchise (+)
+    I:
+    - Taxes - Property (+)
+    - Taxes-Franchise (+)
+    J:
+    - Taxes - Property (+)
+    - Taxes-Franchise (+)
+    K:
+    - Taxes - Property (+)
+    - Taxes-Franchise (+)
+- statement: IS
+  template_line: Other Operating Expenses
+  variants:
+    F:
+    - Auto and Truck Expenses (+)
+    - Bank Service Charges (+)
+    - Charitable Contributions (+)
+    - Computer and Internet Expenses (+)
+    - Dues and Subscriptions (+)
+    - Janitorial Expense (+)
+    - Meals and Entertainment (+)
+    - Office Supplies (+)
+    - Postage and Delivery (+)
+    - Printing and Reproduction (+)
+    - Professional Fees - Acct/Legal (+)
+    - Repairs and Maintenance (+)
+    - Telephone Expense (+)
+    - Travel Expense (+)
+    - Utilities (+)
+    G:
+    - Auto and Truck Expenses (+)
+    - Bank Service Charges (+)
+    - Charitable Contributions (+)
+    - Computer and Internet Expenses (+)
+    - Dues and Subscriptions (+)
+    - Janitorial Expense (+)
+    - Meals and Entertainment (+)
+    - Miscellaneous Expense (+)
+    - Office Supplies (+)
+    - Postage and Delivery (+)
+    - Printing and Reproduction (+)
+    - Professional Fees - Acct/Legal (+)
+    - Repairs and Maintenance (+)
+    - Telephone Expense (+)
+    - Travel Expense (+)
+    - Utilities (+)
+    H:
+    - Auto and Truck Expenses (+)
+    - Bank Service Charges (+)
+    - Charitable Contributions (+)
+    - Computer and Internet Expenses (+)
+    - Dues and Subscriptions (+)
+    - Janitorial Expense (+)
+    - Meals and Entertainment (+)
+    - Office Supplies (+)
+    - Postage and Delivery (+)
+    - Printing and Reproduction (+)
+    - Professional Fees - Acct/Legal (+)
+    - Repairs and Maintenance (+)
+    - Telephone Expense (+)
+    - Travel Expense (+)
+    - Utilities (+)
+    I:
+    - Auto and Truck Expenses (+)
+    - Bank Service Charges (+)
+    - Charitable Contributions (+)
+    - Computer and Internet Expenses (+)
+    - Dues and Subscriptions (+)
+    - Janitorial Expense (+)
+    - Meals and Entertainment (+)
+    - Office Supplies (+)
+    - Postage and Delivery (+)
+    - Printing and Reproduction (+)
+    - Professional Fees - Acct/Legal (+)
+    - Repairs and Maintenance (+)
+    - Telephone Expense (+)
+    - Travel Expense (+)
+    - Utilities (+)
+    J:
+    - Auto and Truck Expenses (+)
+    - Bad Debt Expense (+)
+    - Bank Service Charges (+)
+    - Charitable Contributions (+)
+    - Computer and Internet Expenses (+)
+    - Continuing Education (+)
+    - Dues and Subscriptions (+)
+    - Janitorial Expense (+)
+    - Meals and Entertainment (+)
+    - Office Supplies (+)
+    - Postage and Delivery (+)
+    - Professional Fees - Acct/Legal (+)
+    - Reconciliation Discrepancies (+)
+    - Repairs and Maintenance (+)
+    - Telephone Expense (+)
+    - Travel Expense (+)
+    - Utilities (+)
+    K:
+    - Total Expense (+)
+- statement: IS
+  template_line: Other Income (Expense)
+  variants:
+    F:
+    - Other Income (+)
+    G:
+    - Misc./Other Income (+)
+    - Other Income (+)
+    H:
+    - Other Income (+)
+    I:
+    - Other Income (+)
+    J:
+    - Misc./Other Income (+)
+    - Other Income (+)
+    K:
+    - Other Income (+)
+- statement: IS
+  template_line: Interest Income & Dividends
+  variants:
+    F:
+    - Interest Income (+)
+    G:
+    - Interest Income (+)
+    H:
+    - Interest Income (+)
+    I:
+    - Interest Income (+)
+    - Other Income Blackrock *Div. (+)
+    J:
+    - Interest Income (+)
+    - Other Income Blackrock *Div. (+)
+    - Other Income Schwab *Div (+)
+    K:
+    - Interest Income (+)
+    - Other Income Schwab *Div (+)
+- statement: IS
+  template_line: Recon with Net Inc Per Books
+  variants:
+    F:
+    - Net Income (+)
+    G:
+    - Net Income (-)
+    H:
+    - Net Income (-)
+    I:
+    - Net Income (-)
+    J:
+    - Net Income (-)
+    K:
+    - Net Income (-)
+contested_accounts: {}

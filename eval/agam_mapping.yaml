@@ -1,0 +1,628 @@
+source: DRAFT - AOK Model.xlsx
+mappings:
+- statement: BS
+  client_account: cash
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: money market
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: LOC
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: LOC (Canada)
+  template_line: Cash & Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: receivable
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: receivable (Bermuda)
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: prepaids
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Furniture & Fixtures
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Leasehold Improvement
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Machinery & Equipment - computer
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Machinery & Equipment - office equipment
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Machinery & Equipment - telephone
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Software
+  template_line: Total Fixed Assets (Gross)
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation - furniture & fixtures
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Accumulated amortization - leasehold improvement
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation - computer
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation - office equipment
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation - telephone
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Accumulated amortization - software
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: fixed assets
+  template_line: Net Fixed Assets
+  sign: 1
+- statement: BS
+  client_account: investment
+  template_line: Investments
+  sign: 1
+- statement: BS
+  client_account: investment (Bermuda)
+  template_line: Investments
+  sign: 1
+- statement: BS
+  client_account: payable
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: payable to vendor
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: Visa
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: total equity
+  template_line: Total Equity
+  sign: 1
+- statement: IS
+  client_account: fee income
+  template_line: Revenue
+  sign: 1
+- statement: IS
+  client_account: consultant (Canada)
+  template_line: Bonuses
+  sign: 1
+- statement: IS
+  client_account: India
+  template_line: Bonuses
+  sign: 1
+- statement: IS
+  client_account: deferred compensation expense
+  template_line: Deferred Compensation
+  sign: 1
+- statement: IS
+  client_account: T&E - meals/travel, etc
+  template_line: Guaranteed Payments
+  sign: 1
+- statement: IS
+  client_account: professional fees (Canada)
+  template_line: Rent
+  sign: 1
+- statement: IS
+  client_account: professional fees
+  template_line: Salaries
+  sign: 1
+- statement: IS
+  client_account: T&E - meals/travel, etc
+  template_line: India Office
+  sign: 1
+- statement: IS
+  client_account: internet
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: research/marketing
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: office expense (Canada)
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: office expense
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: rent
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: rent (Canada)
+  template_line: Consultant Expenses
+  sign: 1
+- statement: IS
+  client_account: total income
+  template_line: Insurance Expense
+  sign: 1
+- statement: IS
+  client_account: other expense
+  template_line: Other Operating Expenses
+  sign: 1
+- statement: IS
+  client_account: Depreciation - computer
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: Depreciation - furniture & fixtures
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: Depreciation - office equipment
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: Depreciation - telephone
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: Amortization - leasehold improvement
+  template_line: Amortization
+  sign: 1
+- statement: IS
+  client_account: Amortization - Software
+  template_line: Amortization
+  sign: 1
+- statement: IS
+  client_account: revenue
+  template_line: Interest Income
+  sign: 1
+targets:
+  BS::Cash & Cash Equivalents:
+  - cash
+  - money market
+  - LOC
+  - LOC (Canada)
+  BS::Accounts Receivable:
+  - receivable
+  - receivable (Bermuda)
+  BS::Prepaid Expenses:
+  - prepaids
+  BS::Total Fixed Assets (Gross):
+  - Furniture & Fixtures
+  - Leasehold Improvement
+  - Machinery & Equipment - computer
+  - Machinery & Equipment - office equipment
+  - Machinery & Equipment - telephone
+  - Software
+  BS::Accumulated Depreciation:
+  - Accumulated Depreciation - furniture & fixtures
+  - Accumulated amortization - leasehold improvement
+  - Accumulated Depreciation - computer
+  - Accumulated Depreciation - office equipment
+  - Accumulated Depreciation - telephone
+  - Accumulated amortization - software
+  BS::Net Fixed Assets:
+  - fixed assets
+  BS::Investments:
+  - investment
+  - investment (Bermuda)
+  BS::Accounts Payable:
+  - payable
+  - payable to vendor
+  BS::Other Payables:
+  - Visa
+  BS::Total Equity:
+  - total equity
+  IS::Revenue:
+  - fee income
+  IS::Bonuses:
+  - consultant (Canada)
+  - India
+  IS::Deferred Compensation:
+  - deferred compensation expense
+  IS::Guaranteed Payments:
+  - T&E - meals/travel, etc
+  IS::Rent:
+  - professional fees (Canada)
+  IS::Salaries:
+  - professional fees
+  IS::India Office:
+  - T&E - meals/travel, etc
+  IS::Consultant Expenses:
+  - internet
+  - research/marketing
+  - office expense (Canada)
+  - office expense
+  - rent
+  - rent (Canada)
+  IS::Insurance Expense:
+  - total income
+  IS::Other Operating Expenses:
+  - other expense
+  IS::Depreciation:
+  - Depreciation - computer
+  - Depreciation - furniture & fixtures
+  - Depreciation - office equipment
+  - Depreciation - telephone
+  IS::Amortization:
+  - Amortization - leasehold improvement
+  - Amortization - Software
+  IS::Interest Income:
+  - revenue
+year_variant_mappings:
+- statement: BS
+  template_line: Cash & Cash Equivalents
+  variants:
+    E:
+    - Total Bank Accounts (cash & cash equivalents) (+)
+    F:
+    - Total Bank Accounts (cash & cash equivalents) (+)
+    G:
+    - Total Bank Accounts (cash & cash equivalents) (+)
+    H:
+    - LOC (+)
+    - LOC (Canada) (+)
+    - cash (+)
+    - money market (+)
+    I:
+    - LOC (+)
+    - LOC (Canada) (+)
+    - cash (+)
+    - money market (+)
+    J:
+    - LOC (+)
+    - LOC (Canada) (+)
+    - cash (+)
+    - money market (+)
+    K:
+    - LOC (+)
+    - LOC (Canada) (+)
+    - cash (+)
+    - money market (+)
+- statement: BS
+  template_line: Accounts Receivable
+  variants:
+    E:
+    - Total Accounts Receivable (A/R) (+)
+    F:
+    - Total Accounts Receivable (A/R) (+)
+    G:
+    - Total Accounts Receivable (A/R) (+)
+    H:
+    - receivable (+)
+    - receivable (Bermuda) (+)
+    I:
+    - receivable (+)
+    - receivable (Bermuda) (+)
+    J:
+    - receivable (+)
+    K:
+    - receivable (+)
+    - receivable (Bermuda) (+)
+- statement: BS
+  template_line: Prepaid Expenses
+  variants:
+    E:
+    - Prepaid Expenses - D&O insurance (+)
+    - Prepaid Expenses - P&C insurance (+)
+    F:
+    - Prepaid Expenses - D&O insurance (+)
+    - Prepaid Expenses - P&C insurance (+)
+    G:
+    - Prepaid Expenses - D&O insurance (+)
+    - Prepaid Expenses - P&C insurance (+)
+    H:
+    - prepaids (+)
+    I:
+    - prepaids (+)
+    J:
+    - prepaids (+)
+    K:
+    - prepaids (+)
+- statement: BS
+  template_line: Investments
+  variants:
+    E:
+    - Investments - certificate of deposit (+)
+    - investment - Agam Bermuda Ltd. (+)
+    - investment - Ohio National (common) (+)
+    - investment in affiliate - AGAMAnalytics (+)
+    H:
+    - investment (+)
+    - investment (Bermuda) (+)
+    I:
+    - investment (+)
+    - investment (Bermuda) (+)
+    J:
+    - investment (+)
+    - investment (Bermuda) (+)
+    K:
+    - investment (+)
+    - investment (Bermuda) (+)
+- statement: BS
+  template_line: Accounts Payable
+  variants:
+    E:
+    - due to vendor (AP) (+)
+    F:
+    - due to vendor (AP) (+)
+    G:
+    - Total Accounts Payable (+)
+    H:
+    - payable (+)
+    I:
+    - payable (+)
+    - payable for income tax (+)
+    - payable to vendor (+)
+    J:
+    - payable (+)
+    - payable to vendor (+)
+    K:
+    - payable (+)
+    - payable to vendor (+)
+- statement: BS
+  template_line: Total Equity
+  variants:
+    E:
+    - Total Equity (+)
+    F:
+    - Total Equity (+)
+    G:
+    - Total Equity (+)
+    H:
+    - total equity (+)
+    I:
+    - total equity (+)
+    J:
+    - total equity (+)
+    K:
+    - total equity (+)
+- statement: IS
+  template_line: Revenue
+  variants:
+    E:
+    - GROSS PROFIT (+)
+    F:
+    - GROSS PROFIT (+)
+    G:
+    - GROSS PROFIT (+)
+    H:
+    - Total Income (+)
+    I:
+    - fee income (+)
+    J:
+    - interest income (+)
+    K:
+    - fee income (+)
+- statement: IS
+  template_line: Bonuses
+  variants:
+    E:
+    - Bonus (+)
+    F:
+    - Bonus (+)
+    G:
+    - Bonus (+)
+    H:
+    - Bonus (+)
+    - Bonus (Canada) (+)
+    I:
+    - Bonus (+)
+    - Bonus (Canada) (+)
+    J:
+    - India (+)
+    - consultant (Canada) (+)
+    K:
+    - India (+)
+    - consultant (Canada) (+)
+- statement: IS
+  template_line: Guaranteed Payments
+  variants:
+    E:
+    - guaranteed payments (+)
+    - guaranteed payments (Agam Holdings) (+)
+    F:
+    - guaranteed payments (+)
+    - guaranteed payments (Agam Holdings) (+)
+    G:
+    - guaranteed payments (+)
+    - guaranteed payments (Agam Holdings) (+)
+    H:
+    - guaranteed payments (Agam Holdings) (+)
+    I:
+    - guaranteed payments (Agam Holdings) (+)
+    J:
+    - technology (+)
+    K:
+    - T&E - meals/travel, etc (+)
+- statement: IS
+  template_line: Rent
+  variants:
+    E:
+    - Rent (+)
+    F:
+    - Rent (+)
+    G:
+    - Rent (+)
+    H:
+    - Rent (+)
+    - Rent - Regus (Canada) (+)
+    - Rent Maintenance (+)
+    I:
+    - Rent (+)
+    - Rent - Regus (Canada) (+)
+    - Rent Maintenance (+)
+    J:
+    - software (+)
+    K:
+    - professional fees (Canada) (+)
+- statement: IS
+  template_line: Salaries
+  variants:
+    E:
+    - Salary (+)
+    F:
+    - Salary (+)
+    G:
+    - Salary (+)
+    H:
+    - Salary (+)
+    - Salary (Canada) (+)
+    I:
+    - Salary (+)
+    - Salary (Canada) (+)
+    J:
+    - professional fees (Canada) (+)
+    K:
+    - professional fees (+)
+- statement: IS
+  template_line: India Office
+  variants:
+    E:
+    - India Office (+)
+    F:
+    - India Office (+)
+    G:
+    - India Office (+)
+    H:
+    - India office (+)
+    I:
+    - India office (+)
+    J:
+    - T&E - meals/travel, etc (+)
+- statement: IS
+  template_line: Consultant Expenses
+  variants:
+    E:
+    - Consultant - HR (+)
+    - Consultant - HR (Agam Holdings) (+)
+    - Consultant - personnel (+)
+    - consultant - technology (+)
+    F:
+    - Consultant - HR (+)
+    - Consultant - HR (Agam Holdings) (+)
+    - Consultant - personnel (+)
+    - consultant - technology (+)
+    G:
+    - Consultant - HR (+)
+    - Consultant - HR (Agam Holdings) (+)
+    - Consultant - personnel (+)
+    - consultant - technology (+)
+    H:
+    - Consultant - HR (+)
+    - Consultant - HR (Agam Holdings) (+)
+    - Consultant - HR (Canada) (+)
+    - Consultant - personnel (+)
+    - consultant - technology (+)
+    I:
+    - Consultant - HR (+)
+    - Consultant - HR (Agam Holdings) (+)
+    - Consultant - HR (Canada) (+)
+    - Consultant - personnel (+)
+    - Consultant - personnel (Canada) (+)
+    - consultant - technology (+)
+    J:
+    - internet (+)
+    - office expense (+)
+    - office expense (Canada) (+)
+    - rent (+)
+    - rent (Canada) (+)
+    - research/marketing (+)
+    K:
+    - internet (+)
+    - office expense (+)
+    - office expense (Canada) (+)
+    - rent (+)
+    - rent (Canada) (+)
+    - research/marketing (+)
+- statement: IS
+  template_line: Insurance Expense
+  variants:
+    E:
+    - Insurance - D&O (+)
+    - Insurance - property & casualty (+)
+    - Insurance - worker's compensation (+)
+    F:
+    - Insurance - D&O (+)
+    - Insurance - property & casualty (+)
+    - Insurance - worker's compensation (+)
+    G:
+    - Insurance - D&O (+)
+    - Insurance - property & casualty (+)
+    - Insurance - worker's compensation (+)
+    H:
+    - Insurance - D&O (+)
+    - Insurance - Employment (Canada) (+)
+    - Insurance - property & casualty (+)
+    - Insurance - worker's compensation (+)
+    - Insurance - worker's compensation (Canada) (+)
+    I:
+    - Insurance - D&O (+)
+    - Insurance - Employment (Canada) (+)
+    - Insurance - cyber (+)
+    - Insurance - property & casualty (+)
+    - Insurance - worker's compensation (+)
+    - Insurance - worker's compensation (Canada) (+)
+    J:
+    - total expenses (+)
+    - total income (+)
+    K:
+    - total income (+)
+- statement: IS
+  template_line: Other Operating Expenses
+  variants:
+    E:
+    - Total Expenses (+)
+    F:
+    - Total Expenses (+)
+    G:
+    - Total Expenses (+)
+    H:
+    - Total Expenses (+)
+    I:
+    - Total Expenses (+)
+    J:
+    - consultant (+)
+    K:
+    - other expense (+)
+- statement: IS
+  template_line: Interest Income
+  variants:
+    E:
+    - Interest Earned (+)
+    F:
+    - Interest Earned (+)
+    G:
+    - Interest Earned (+)
+    H:
+    - Interest Earned (+)
+    I:
+    - Interest Earned (+)
+    J:
+    - fee income (+)
+    K:
+    - revenue (+)
+contested_accounts:
+  T&E - meals/travel, etc:
+  - Guaranteed Payments
+  - India Office

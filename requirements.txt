@@ -1,0 +1,13 @@
+# Core
+openpyxl>=3.1        # review workbook + read-only template inspection (never writes the BVAL)
+PyYAML>=6.0          # client profiles and eval fixtures
+PyMuPDF>=1.24        # PDF reader (fsa/ingest/readers/pdf.py)
+anthropic>=0.40      # L4 mapping proposals + period resolution; degrades to manual
+pydantic>=2.0        # response schemas in fsa/mapping/llm.py (arrives via anthropic,
+                     # but it is a direct import here and belongs pinned)
+
+# Windows only -- the COM writer is the only supported way to fill the template
+pywin32>=306; sys_platform == "win32"
+
+# Development
+pytest>=8.0

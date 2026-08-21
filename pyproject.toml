@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "financial-statement-automizer"
+version = "0.3.0"
+description = "Turns a client's financial statements into a populated Weaver BVAL model, with a mandatory human review step in the middle."
+requires-python = ">=3.11"
+dependencies = [
+    "openpyxl>=3.1",   # review workbook + read-only template inspection
+    "PyYAML>=6.0",     # client profiles and eval fixtures
+    "PyMuPDF>=1.24",   # PDF reader
+    "anthropic>=0.40", # mapping proposals and period resolution
+    "pydantic>=2.0",   # response schemas in fsa/mapping/llm.py
+    "pywin32>=306; sys_platform == 'win32'",  # the COM writer, Windows only
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+# So an analyst types `fsa prepare ...` rather than `python -m fsa.cli prepare ...`
+fsa = "fsa.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["fsa*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["sample: integration test requiring the real client sample workbooks"]
+filterwarnings = ["ignore::UserWarning:openpyxl.*"]

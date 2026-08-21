@@ -1,0 +1,358 @@
+source: TS Distributors, Inc. BVAL Model.xlsx
+mappings:
+- statement: BS
+  client_account: Operating Account
+  template_line: Cash and Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: Petty Cash
+  template_line: Cash and Cash Equivalents
+  sign: 1
+- statement: BS
+  client_account: Accounts Receivable - Trade
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: Accounts Receivable - Indital
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: A/R terms - Allowed write off
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: Allowance for doubtful accounts
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: Other A/R
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: NSF Clearing Account
+  template_line: Accounts Receivable
+  sign: 1
+- statement: BS
+  client_account: Inventory
+  template_line: Inventory
+  sign: 1
+- statement: BS
+  client_account: Inventory - Offsite
+  template_line: Inventory
+  sign: 1
+- statement: BS
+  client_account: Inventory - Indital Beg Balance Variance
+  template_line: Inventory
+  sign: 1
+- statement: BS
+  client_account: Inventory - Capitalized Sec 236A
+  template_line: Inventory
+  sign: 1
+- statement: BS
+  client_account: Catalog Inventory
+  template_line: Inventory
+  sign: 1
+- statement: BS
+  client_account: Prepaid Expenses
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Prepaid Taxes
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Prepaid Payroll
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Prepaid Insurance
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Prepaid Inventory
+  template_line: Prepaid Expenses
+  sign: 1
+- statement: BS
+  client_account: Employee Advances
+  template_line: Employee Advances
+  sign: 1
+- statement: BS
+  client_account: Notes Receivable
+  template_line: Note Receivable, Current
+  sign: 1
+- statement: BS
+  client_account: Furniture & Fixtures
+  template_line: Furniture and Fixtures
+  sign: 1
+- statement: BS
+  client_account: Warehouse - Equipment & Racks
+  template_line: Equipment
+  sign: 1
+- statement: BS
+  client_account: Machinery & Equipment
+  template_line: Equipment
+  sign: 1
+- statement: BS
+  client_account: Computer Equipment
+  template_line: Equipment
+  sign: 1
+- statement: BS
+  client_account: Leasehold Improvements
+  template_line: Leasehold Improvements
+  sign: 1
+- statement: BS
+  client_account: Vehicles
+  template_line: Vehicles
+  sign: 1
+- statement: BS
+  client_account: Software
+  template_line: Software
+  sign: 1
+- statement: BS
+  client_account: Accumulated Depreciation & Amort.
+  template_line: Accumulated Depreciation
+  sign: 1
+- statement: BS
+  client_account: Organizational Costs
+  template_line: Organizational Costs (Net)
+  sign: 1
+- statement: BS
+  client_account: Goodwill - Exclusivity Contract
+  template_line: Exclusivity Contract (Net)
+  sign: 1
+- statement: BS
+  client_account: Goodwill
+  template_line: Goodwill (Net)
+  sign: 1
+- statement: BS
+  client_account: Deposits
+  template_line: Deposits
+  sign: 1
+- statement: BS
+  client_account: Accounts Payable
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: Inventory Receipts - Clearing Account
+  template_line: Accounts Payable
+  sign: 1
+- statement: BS
+  client_account: Sales Tax Payable
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: Property Tax Payable
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: Corp Tax Payable
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: Other Paybles
+  template_line: Other Payables
+  sign: 1
+- statement: BS
+  client_account: Accrued Expenses
+  template_line: Accrued Expenses
+  sign: 1
+- statement: BS
+  client_account: Accrued Payroll Expense
+  template_line: Accrued Expenses
+  sign: 1
+- statement: BS
+  client_account: Accrued 401k Expenses
+  template_line: Accrued Expenses
+  sign: 1
+- statement: BS
+  client_account: Deferred Revenue
+  template_line: Deferred Revenue
+  sign: 1
+- statement: BS
+  client_account: Notes Payable
+  template_line: Long-Term Debt
+  sign: 1
+- statement: BS
+  client_account: Total Owners Equity
+  template_line: Total Equity
+  sign: 1
+- statement: IS
+  client_account: Sales
+  template_line: Sales Revenue
+  sign: 1
+- statement: IS
+  client_account: Sales - Processing
+  template_line: Sales Revenue
+  sign: 1
+- statement: IS
+  client_account: Sales - Discounts & Allowances
+  template_line: Sales Revenue
+  sign: 1
+- statement: IS
+  client_account: Pricing Adjustments
+  template_line: Pricing Adjustments
+  sign: 1
+- statement: IS
+  client_account: Freight Income
+  template_line: Freight Income
+  sign: 1
+- statement: IS
+  client_account: Finance Revenues
+  template_line: Finance Revenues
+  sign: 1
+- statement: IS
+  client_account: Total Cost of Goods Sold
+  template_line: Cost of Revenue
+  sign: 1
+- statement: IS
+  client_account: Total Salaries & Wages
+  template_line: Salaries & Wages
+  sign: 1
+- statement: IS
+  client_account: Total Operating Expenses
+  template_line: SG&A Expenses
+  sign: 1
+- statement: IS
+  client_account: Depreciation Expense
+  template_line: Depreciation
+  sign: 1
+- statement: IS
+  client_account: Amortization Expense
+  template_line: Amortization
+  sign: 1
+- statement: IS
+  client_account: Amortization Expense - 5 yr contract
+  template_line: Amortization
+  sign: 1
+- statement: IS
+  client_account: Other Revenues
+  template_line: Other Income (Exp.)
+  sign: 1
+- statement: IS
+  client_account: Taxes - State Income/Franchise
+  template_line: Other Income (Exp.)
+  sign: -1
+- statement: IS
+  client_account: Penalties/Fines
+  template_line: Other Income (Exp.)
+  sign: -1
+- statement: IS
+  client_account: Interest Expense
+  template_line: Interest (Expense)
+  sign: -1
+targets:
+  BS::Cash and Cash Equivalents:
+  - Operating Account
+  - Petty Cash
+  BS::Accounts Receivable:
+  - Accounts Receivable - Trade
+  - Accounts Receivable - Indital
+  - A/R terms - Allowed write off
+  - Allowance for doubtful accounts
+  - Other A/R
+  - NSF Clearing Account
+  BS::Inventory:
+  - Inventory
+  - Inventory - Offsite
+  - Inventory - Indital Beg Balance Variance
+  - Inventory - Capitalized Sec 236A
+  - Catalog Inventory
+  BS::Prepaid Expenses:
+  - Prepaid Expenses
+  - Prepaid Taxes
+  - Prepaid Payroll
+  - Prepaid Insurance
+  - Prepaid Inventory
+  BS::Employee Advances:
+  - Employee Advances
+  BS::Note Receivable, Current:
+  - Notes Receivable
+  BS::Furniture and Fixtures:
+  - Furniture & Fixtures
+  BS::Equipment:
+  - Warehouse - Equipment & Racks
+  - Machinery & Equipment
+  - Computer Equipment
+  BS::Leasehold Improvements:
+  - Leasehold Improvements
+  BS::Vehicles:
+  - Vehicles
+  BS::Software:
+  - Software
+  BS::Accumulated Depreciation:
+  - Accumulated Depreciation & Amort.
+  BS::Organizational Costs (Net):
+  - Organizational Costs
+  BS::Exclusivity Contract (Net):
+  - Goodwill - Exclusivity Contract
+  BS::Goodwill (Net):
+  - Goodwill
+  BS::Deposits:
+  - Deposits
+  BS::Accounts Payable:
+  - Accounts Payable
+  - Inventory Receipts - Clearing Account
+  BS::Other Payables:
+  - Sales Tax Payable
+  - Property Tax Payable
+  - Corp Tax Payable
+  - Other Paybles
+  BS::Accrued Expenses:
+  - Accrued Expenses
+  - Accrued Payroll Expense
+  - Accrued 401k Expenses
+  BS::Deferred Revenue:
+  - Deferred Revenue
+  BS::Long-Term Debt:
+  - Notes Payable
+  BS::Total Equity:
+  - Total Owners Equity
+  IS::Sales Revenue:
+  - Sales
+  - Sales - Processing
+  - Sales - Discounts & Allowances
+  IS::Pricing Adjustments:
+  - Pricing Adjustments
+  IS::Freight Income:
+  - Freight Income
+  IS::Finance Revenues:
+  - Finance Revenues
+  IS::Cost of Revenue:
+  - Total Cost of Goods Sold
+  IS::Salaries & Wages:
+  - Total Salaries & Wages
+  IS::SG&A Expenses:
+  - Total Operating Expenses
+  IS::Depreciation:
+  - Depreciation Expense
+  IS::Amortization:
+  - Amortization Expense
+  - Amortization Expense - 5 yr contract
+  IS::Other Income (Exp.):
+  - Other Revenues
+  - Taxes - State Income/Franchise
+  - Penalties/Fines
+  IS::Interest (Expense):
+  - Interest Expense
+year_variant_mappings:
+- statement: BS
+  template_line: Goodwill (Net)
+  variants:
+    F:
+    - Goodwill (+)
+    - Goodwill - Exclusivity Contract (+)
+    G:
+    - Goodwill (+)
+    - Goodwill - Exclusivity Contract (+)
+    H:
+    - Goodwill (+)
+    - Goodwill - Exclusivity Contract (+)
+    I:
+    - Goodwill (+)
+    - Goodwill - Exclusivity Contract (+)
+    J:
+    - Goodwill (+)
+    - Goodwill - Exclusivity Contract (+)
+    K:
+    - Goodwill (+)
+contested_accounts: {}

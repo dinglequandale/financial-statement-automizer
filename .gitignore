@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+out/
+.env
+.env.*
+!.env.example
+
+# Client material never belongs in version control. These are real financial
+# statements and real delivered valuation models for named companies; the
+# sample directory is working data, not project source.
+Konrad Project/
+jobs/
+*.job/
+
+# Job directories and generated models, wherever they are dropped.
+review.xlsx
+findings.json
+proposed.yaml
+
+# Build artefacts
+*.egg-info/
+build/
+dist/
