@@ -873,6 +873,87 @@ def audit_against_reference(ours: ConsolidatedTable, reference: ConsolidatedTabl
 # --------------------------------------------------------------------------
 
 
+# --------------------------------------------------------------------------
+# The gate that needs no foresight
+# --------------------------------------------------------------------------
+
+#: A subtotal that misses by less than this share of the larger of the two
+#: figures is a rounding artefact -- half a cent on a balance sheet, a penny
+#: spread across a block. Anything bigger is structural.
+MATERIAL_SHARE = 0.005
+#: ...and must also clear an absolute floor, so a block of near-zero balances
+#: cannot trip the gate on pennies.
+MATERIAL_FLOOR = 1.0
+
+
+def _is_material(expected: float | None, actual: float | None) -> bool:
+    if expected is None or actual is None:
+        return False
+    gap = abs(actual - expected)
+    if gap < MATERIAL_FLOOR:
+        return False
+    scale = max(abs(actual), abs(expected))
+    return scale <= 0 or gap / scale >= MATERIAL_SHARE
+
+
+def extraction_unreliable(findings: list[Finding]) -> list[Finding]:
+    """ERROR: a statement whose own subtotals do not add up was misread.
+
+    Every other check in this module asks a question we thought to ask. This
+    one asks the only question that does not depend on foresight: **do the
+    client's own totals hold?** A statement is a closed arithmetic system, and
+    the client already did the arithmetic -- so if our reading of it fails to
+    reproduce their totals, we read it wrong, and it does not matter which
+    novelty of layout, locale or export tool caused it.
+
+    That property is what makes this the generalization defence. Enumerating
+    what a column *is* (period, entity, statement type) catches numbers that
+    are right but belong somewhere else, and that list has to be discovered
+    dimension by dimension. This catches numbers that are simply wrong, at any
+    client, in any format, without anyone predicting the cause.
+
+    It is graded on materiality rather than fired on every discrepancy,
+    because rounding is not misreading: measured across four engagements,
+    three reproduce every client subtotal exactly and the fourth misses nine
+    of them by margins like `Total Fixed Assets = 60,595 against components
+    summing to 2,076`. The first three must stay clean and the fourth must
+    stop, and only a materiality test does both.
+    """
+    by_slot: dict[tuple, list[Finding]] = {}
+    for f in findings:
+        if f.code != "subtotal_mismatch":
+            continue
+        d = f.detail or {}
+        if not _is_material(d.get("expected"), d.get("actual")):
+            continue
+        by_slot.setdefault((f.statement, f.fiscal_year), []).append(f)
+
+    out: list[Finding] = []
+    for (statement, year), bad in sorted(
+        by_slot.items(), key=lambda kv: (kv[0][0].value if kv[0][0] else "", kv[0][1] or 0)
+    ):
+        worst = max(bad, key=lambda f: abs((f.detail or {}).get("actual", 0) - (f.detail or {}).get("expected", 0)))
+        out.append(
+            Finding(
+                severity=Severity.ERROR,
+                code="extraction_unreliable",
+                message=(
+                    f"{statement.value if statement else '?'} FY{year}: "
+                    f"{len(bad)} of the client's own subtotals do not add up from the "
+                    f"rows we read -- worst is {worst.account!r} "
+                    f"({_fmt((worst.detail or {}).get('actual'))} reported against "
+                    f"{_fmt((worst.detail or {}).get('expected'))} from its components). "
+                    f"The figures for this year were not read correctly and must not be "
+                    f"mapped until that is resolved."
+                ),
+                statement=statement,
+                fiscal_year=year,
+                detail={"failed_subtotals": len(bad)},
+            )
+        )
+    return out
+
+
 def run_all(ss: StatementSet, tables: dict[StatementType, "ConsolidatedTable"]) -> ValidationReport:
     """Every non-audit check. Returns a ValidationReport."""
     report = ValidationReport()
@@ -892,5 +973,8 @@ def run_all(ss: StatementSet, tables: dict[StatementType, "ConsolidatedTable"]) 
         report.extend(account_added(table))
         report.extend(account_removed(table))
         report.extend(account_renamed(table))
+
+    # Last, because it grades findings the checks above produced.
+    report.extend(extraction_unreliable(report.findings))
 
     return report
