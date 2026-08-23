@@ -56,12 +56,14 @@ EXPLANATIONS: dict[str, Explanation] = {
         "Use the full-year statement for this year, or exclude the period.",
     ),
     "entity_scope_ambiguous": Explanation(
-        "Several companies' figures are in one file",
-        "The file holds more than one set of books for the same year and it is "
-        "not clear which one is being valued. Picking the wrong one values a "
-        "subsidiary instead of the group.",
-        "Decide which company you are valuing and enter its name in the "
-        "Reporting entity box, exactly as the tab is labelled.",
+        "Two sources claim the same year, and it is not clear which to use",
+        "Either one file holds several companies' books and it is unclear which "
+        "is being valued, or two files hold the same statement -- sometimes "
+        "because a file is misnamed. Picking the wrong one values the wrong "
+        "thing, or uses the wrong version of the year.",
+        "Look at the sources named above. If they are companies, put the one "
+        "you are valuing in the Reporting entity box. If they are two files "
+        "with the same figures, remove the duplicate from the folder.",
     ),
     "scale_not_as_reported": Explanation(
         "Figures are stated in thousands or millions",

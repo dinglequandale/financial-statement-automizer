@@ -199,6 +199,31 @@ class RawRow:
     depth: int | None = None  # nesting level, 0-based; None == unknown
     locator: str = ""  # provenance within the part: "C18", "y=249.7"
     truncated: bool = False  # label ended in "..." at source (PLAN 2.6 #4)
+    #: Which source column each entry of `values` came from, same order and
+    #: length. A single-period document does not care, but a statement laid out
+    #: with a year per column cannot be read without it: the header row has to
+    #: line up with the figures beneath it, and a positional list of numbers
+    #: throws away exactly the fact that makes that possible.
+    value_cols: list[int] = field(default_factory=list)
+    #: Every text cell on the row as `(column, text)`, label included. Readers
+    #: previously kept the label and the first stray and dropped the rest,
+    #: which discarded whole header rows -- `Dec 31, 19 | Dec 31, 20 | ...` --
+    #: before anything could tell that the sheet held six years.
+    texts: list[tuple[int, str]] = field(default_factory=list)
+
+    def value_at(self, col: int | None) -> float | None:
+        """This row's figure in one source column.
+
+        `col=None` means "the first figure on the row", which is what a
+        single-period document wants and what every caller did before layouts
+        with a year per column had to be read.
+        """
+        if col is None:
+            return next((v for v in self.values if v is not None), None)
+        for c, v in zip(self.value_cols, self.values):
+            if c == col:
+                return v
+        return None
 
     @property
     def is_blank(self) -> bool:

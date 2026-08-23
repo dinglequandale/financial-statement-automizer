@@ -103,7 +103,17 @@ def merge_pages(ss: StatementSet) -> list[Finding]:
 
 
 def _label(c: ExtractedColumn) -> str:
-    return c.entity or c.source_sheet or "(unnamed)"
+    """How to name a claimant so the analyst can tell them apart.
+
+    A named tab identifies itself. A default one does not -- `Sheet1, Sheet1`
+    tells nobody anything -- and in that case the claimants are really two
+    *files*, which is what client five hit: a workbook of balance sheets and a
+    file named `Profit and Loss ...` that turned out to contain balance sheets
+    too, both claiming the same six years.
+    """
+    if c.entity:
+        return c.entity
+    return c.source_file.name if c.source_file else (c.source_sheet or "(unnamed)")
 
 
 def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding]:
@@ -123,7 +133,12 @@ def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding
     want = (preferred or "").strip().casefold()
     drop: set[int] = set()
     for (st, year), cols in sorted(contested.items(), key=lambda kv: (kv[0][0].value, kv[0][1])):
-        rollups = [c for c in cols if looks_like_rollup(_label(c))]
+        # Roll-up candidacy is judged on the *entity* a tab names, never on a
+        # file name. Client five ships a file called `Profit and Loss Jan - Aug
+        # 24 and 25.ods` that actually contains balance sheets; letting the
+        # filename match the statement-named rule made it the winning "roll-up"
+        # for six balance sheet years, silently, over the real workbook.
+        rollups = [c for c in cols if looks_like_rollup(c.entity)]
         names = ", ".join(sorted(_label(c) for c in cols))
 
         asked = [c for c in cols if want and want in _label(c).casefold()] if want else []
@@ -134,7 +149,7 @@ def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding
                     severity=Severity.INFO,
                     code="entity_scope_selected",
                     message=(
-                        f"{st.value} FY{year}: {len(cols)} tabs claim this year "
+                        f"{st.value} FY{year}: {len(cols)} sources claim this year "
                         f"({names}); used {_label(winner)!r} as requested."
                     ),
                     statement=st,
@@ -154,7 +169,7 @@ def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding
                     severity=Severity.INFO,
                     code="entity_scope_selected",
                     message=(
-                        f"{st.value} FY{year}: {len(cols)} tabs claim this year "
+                        f"{st.value} FY{year}: {len(cols)} sources claim this year "
                         f"({names}); used {_label(winner)!r} as the reporting "
                         f"scope. Override with --scope if that is not the entity "
                         f"being valued."
@@ -171,7 +186,7 @@ def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding
                     severity=Severity.ERROR,
                     code="entity_scope_ambiguous",
                     message=(
-                        f"{st.value} FY{year}: {len(cols)} tabs claim this year "
+                        f"{st.value} FY{year}: {len(cols)} sources claim this year "
                         f"({names}) and "
                         + (
                             f"{len(rollups)} of them look like roll-ups"

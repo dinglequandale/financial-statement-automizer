@@ -173,12 +173,17 @@ def _read_sheet(ws) -> RawPart:
         first_numeric_col: int | None = None
         values: list[float | None] = []
 
+        value_cols: list[int] = []
+        texts: list[tuple[int, str]] = []
+
         for c, kind, v in row_cells:
             if kind == "numeric":
                 values.append(v)
+                value_cols.append(c)
                 if first_numeric_col is None:
                     first_numeric_col = c
             else:  # text
+                texts.append((c, v.strip()))
                 if c == label_col:
                     raw_label = v
                     label = v.strip()
@@ -218,6 +223,8 @@ def _read_sheet(ws) -> RawPart:
                 depth=depth,
                 locator=locator,
                 truncated=truncated,
+                value_cols=value_cols,
+                texts=texts,
             )
         )
 

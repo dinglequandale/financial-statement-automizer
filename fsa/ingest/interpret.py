@@ -255,6 +255,70 @@ def _classify(rows: list[RawRow]) -> list[tuple[RawRow, RowKind, str | None]]:
     return out
 
 
+#: Share of a header row's non-label cells that must read as periods before the
+#: row is treated as a period header rather than as prose.
+_PERIOD_HEADER_SHARE = 0.6
+
+
+def period_columns(rows, resolver, statement) -> dict[int, "Period"]:
+    """Map source column -> period, when a statement puts a year in each column.
+
+    Client five sends six years side by side under a header row of
+    `Dec 31, 19 | Dec 31, 20 | ...`. Read one column at a time, five of those
+    six years vanish, and nothing downstream can tell: the column that was read
+    reconciles perfectly against the client's own subtotals.
+
+    Whether a header row names periods or names companies is decided by the
+    period parser that already exists rather than by a new vocabulary. Measured
+    on the real files: client five's headers parse as periods 100% of the time,
+    while AOK Holdings' entity and working-schedule headers manage 0-50%. A
+    `TOTAL` column at the end simply fails to parse and drops out on its own,
+    which is exactly what should happen to it.
+    """
+    best: dict[int, "Period"] = {}
+    for row in rows:
+        candidates = [(c, t) for c, t in (row.texts or []) if t]
+        if len(candidates) < 2:
+            continue
+        found: dict[int, "Period"] = {}
+        for col, text in candidates:
+            period = (
+                resolver.resolve(text, statement)[0] if resolver else parse_period(text)
+            )
+            if period is not None:
+                found[col] = period
+        if len(found) < 2 or len(found) / len(candidates) < _PERIOD_HEADER_SHARE:
+            continue
+        # Distinct periods only: a header repeating one date is a layout, not a
+        # history.
+        if len({p.key for p in found.values()}) < 2:
+            continue
+        if len(found) > len(best):
+            best = found
+
+    # A header only names a column if figures actually sit under it. One of
+    # client five's interim balance sheets puts its two headings in columns 3
+    # and 4 while the figures sit in 2 and 3 -- an off-by-one from however the
+    # sheet was exported. Reading the headers at face value there would file
+    # August 2025 under August 2024 and leave the other year empty, and
+    # guessing the offset is exactly the kind of repair that quietly invents a
+    # number. Keep only headings that line up, and fall back to reading a
+    # single period when too few do.
+    if best:
+        with_values: set[int] = set()
+        for row in rows:
+            for col, value in zip(row.value_cols or [], row.values or []):
+                if value is not None:
+                    with_values.add(col)
+        aligned = {c: p for c, p in best.items() if c in with_values}
+        best = aligned if len(aligned) > 1 else {}
+    return best
+
+
+def _drop(_finding) -> None:
+    """Swallow a finding already raised for an earlier column."""
+
+
 def _needs_resolution(seg: _Segment) -> bool:
     if seg.period is None:
         return True
@@ -434,11 +498,18 @@ def interpret(
             # loss of exactly the kind nothing downstream can detect -- the one
             # column read ties every subtotal perfectly, so the arithmetic gate
             # passes it. Client five ships a six-year Profit and Loss this way.
-            # Uniformity is the evidence, not the maximum. A real period grid
-            # gives almost every valued row the same number of figures --
-            # client five's six-year Profit and Loss is 7 columns on 102 of 102
-            # rows. A messy single-period layout is ragged: AOK Holdings scatters
-            # 2, 3, 4 and 5 figures across different rows and means one period by
+            # A statement laid out with a year per column is read column by
+            # column. Whether those columns are years or companies is settled
+            # by the period parser rather than by a new vocabulary: client
+            # five's headers read as periods 100% of the time, AOK Holdings'
+            # entity and working schedules 0-50%.
+            pcols = period_columns(seg.rows, resolver, seg.statement)
+
+            # Uniformity is the evidence, not the maximum. A real grid gives
+            # almost every valued row the same number of figures -- client
+            # five's six-year Profit and Loss is 7 columns on 102 of 102 rows.
+            # A messy single-period layout is ragged: AOK Holdings scatters 2,
+            # 3, 4 and 5 figures across different rows and means one period by
             # all of them, so keying on the widest row accused it 27 times.
             counts = Counter(
                 len([v for v in r.values if v is not None]) for r in seg.rows
@@ -446,7 +517,12 @@ def interpret(
             counts.pop(0, None)
             valued = sum(counts.values())
             widest, modal_rows = counts.most_common(1)[0] if counts else (0, 0)
-            if widest > 1 and valued and modal_rows / valued >= _GRID_UNIFORMITY:
+            if (
+                not pcols
+                and widest > 1
+                and valued
+                and modal_rows / valued >= _GRID_UNIFORMITY
+            ):
                 findings.append(
                     Finding(
                         severity=Severity.WARNING,
@@ -454,9 +530,9 @@ def interpret(
                         message=(
                             f"{doc.source.name}::{part.name}: this "
                             f"{seg.statement.value} lays out {widest} columns of "
-                            f"figures and only the first was read. If those columns "
-                            f"are years, the rest have been dropped; if they are "
-                            f"entities or a working schedule, nothing is missing."
+                            f"figures whose headings do not read as dates, so they "
+                            f"were treated as one period. If they are in fact years, "
+                            f"the rest have been dropped."
                         ),
                         statement=seg.statement,
                         fiscal_year=seg.period.fiscal_year,
@@ -468,87 +544,95 @@ def interpret(
             _scale, _scale_label = detect_scale(head)
             _currency = detect_currency(head)
 
-            rows: list[AccountRow] = []
-            used: dict[str, str | None] = {}
-            for raw, kind, section in _classify(seg.rows):
-                label = (raw.label or "").strip()
-                if kind is RowKind.BLANK or not label:
-                    continue
-                value = next((v for v in raw.values if v is not None), None)
-                norm = normalize(label)
+            # One column per period when the sheet is a grid, otherwise the
+            # single period the segment declares. Row-level findings are
+            # raised on the first pass only: the same truncated label does
+            # not become six findings because the client sent six years.
+            targets = (
+                sorted(pcols.items()) if len(pcols) > 1 else [(None, seg.period)]
+            )
+            for first, (col, period) in enumerate(targets):
+                first = first == 0
+                rows: list[AccountRow] = []
+                used: dict[str, str | None] = {}
+                for raw, kind, section in _classify(seg.rows):
+                    label = (raw.label or "").strip()
+                    if kind is RowKind.BLANK or not label:
+                        continue
+                    value = raw.value_at(col)
+                    norm = normalize(label)
 
-                # Two *data* rows sharing a name would collide downstream.
-                # Qualify with the section rather than lose one.
-                if kind in (RowKind.DATA, RowKind.SUBTOTAL) and norm in used:
-                    if section and normalize(section) != used[norm]:
-                        norm = normalize(f"{section} {label}")
-                        findings.append(
+                    # Two *data* rows sharing a name would collide downstream.
+                    # Qualify with the section rather than lose one.
+                    if kind in (RowKind.DATA, RowKind.SUBTOTAL) and norm in used:
+                        if section and normalize(section) != used[norm]:
+                            norm = normalize(f"{section} {label}")
+                            (findings.append if first else _drop)(
+                                Finding(
+                                    severity=Severity.INFO,
+                                    code="duplicate_label_qualified",
+                                    message=(
+                                        f"{seg.statement.value}: {label!r} appears more "
+                                        f"than once; the copy under {section!r} was "
+                                        f"qualified to keep them distinct"
+                                    ),
+                                    statement=seg.statement,
+                                    account=label,
+                                )
+                            )
+                    if kind in (RowKind.DATA, RowKind.SUBTOTAL):
+                        used.setdefault(norm, normalize(section) if section else None)
+
+                    if raw.truncated:
+                        (findings.append if first else _drop)(
                             Finding(
                                 severity=Severity.INFO,
-                                code="duplicate_label_qualified",
+                                code="label_truncated_at_source",
                                 message=(
-                                    f"{seg.statement.value}: {label!r} appears more "
-                                    f"than once; the copy under {section!r} was "
-                                    f"qualified to keep them distinct"
+                                    f"{seg.statement.value}: {label!r} was cut off by "
+                                    f"the client's own report; matching on a prefix"
                                 ),
                                 statement=seg.statement,
                                 account=label,
                             )
                         )
-                if kind in (RowKind.DATA, RowKind.SUBTOTAL):
-                    used.setdefault(norm, normalize(section) if section else None)
 
-                if raw.truncated:
-                    findings.append(
-                        Finding(
-                            severity=Severity.INFO,
-                            code="label_truncated_at_source",
-                            message=(
-                                f"{seg.statement.value}: {label!r} was cut off by "
-                                f"the client's own report; matching on a prefix"
-                            ),
-                            statement=seg.statement,
-                            account=label,
+                    rows.append(
+                        AccountRow(
+                            raw_label=label,
+                            norm_label=norm,
+                            kind=kind,
+                            value=value,
+                            section=section,
+                            row_index=raw.index,
+                            ref=CellRef(file=doc.source, sheet=part.name, cell=raw.locator),
+                            depth=raw.depth,
                         )
                     )
-
-                rows.append(
-                    AccountRow(
-                        raw_label=label,
-                        norm_label=norm,
-                        kind=kind,
-                        value=value,
-                        section=section,
-                        row_index=raw.index,
-                        ref=CellRef(file=doc.source, sheet=part.name, cell=raw.locator),
-                        depth=raw.depth,
+                columns.append(
+                    ExtractedColumn(
+                        statement=seg.statement,
+                        fiscal_year=period.fiscal_year,
+                        role=ColumnRole.PRIMARY,
+                        source_file=doc.source,
+                        source_sheet=part.name,
+                        value_column=f"c{col}" if col else "v0",
+                        label_column="label",
+                        period_end=period.end,
+                        period_months=period.months,
+                        # A worksheet tab is often a reporting scope -- sample 3
+                        # splits `consolidated` from `US`, `Canada` and `Bermuda`.
+                        # A *default* tab name is not: `Sheet1` and `p2` are
+                        # provenance. Recording them as entities made two halves of
+                        # one Profit and Loss look like rival scopes, so they
+                        # contested the year instead of being joined and half the
+                        # statement was dropped.
+                        entity=None if _is_default_name(part.name) else part.name,
+                        scale=_scale,
+                        scale_label=_scale_label,
+                        currency=_currency,
+                        rows=rows,
                     )
-                )
-
-            columns.append(
-                ExtractedColumn(
-                    statement=seg.statement,
-                    fiscal_year=seg.period.fiscal_year,
-                    role=ColumnRole.PRIMARY,
-                    source_file=doc.source,
-                    source_sheet=part.name,
-                    value_column="v0",
-                    label_column="label",
-                    period_end=seg.period.end,
-                    period_months=seg.period.months,
-                    # A worksheet tab is often a reporting scope -- sample 3
-                    # splits `consolidated` from `US`, `Canada` and `Bermuda`.
-                    # A *default* tab name is not: `Sheet1` and `p2` are
-                    # provenance. Recording them as entities made two halves of
-                    # one Profit and Loss look like rival scopes, so they
-                    # contested the year instead of being joined and half the
-                    # statement was dropped.
-                    entity=None if _is_default_name(part.name) else part.name,
-                    scale=_scale,
-                    scale_label=_scale_label,
-                    currency=_currency,
-                    rows=rows,
-                )
             )
 
     return columns, findings

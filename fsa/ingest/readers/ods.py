@@ -224,6 +224,9 @@ def _build_row(
         depth=None,
         locator=locator,
         truncated=truncated,
+        value_cols=[c for c, is_num, _t, v in cells if is_num and v is not None],
+        texts=[(c, t.strip()) for c, is_num, t, _v in cells
+               if not is_num and t and t.strip()],
     )
 
     if label is not None:
