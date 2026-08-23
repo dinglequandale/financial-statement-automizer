@@ -393,3 +393,45 @@ def test_a_default_tab_name_is_provenance_not_a_reporting_scope(name):
 @pytest.mark.parametrize("name", ["consolidated", "US", "Bermuda", "Canada", "HoldCo", "Profit and Loss"])
 def test_a_named_tab_is_kept_as_a_scope(name):
     assert not _is_default_name(name)
+
+
+# --------------------------------------------------------------------------
+# two files, or two companies -- not the same failure
+# --------------------------------------------------------------------------
+
+
+def test_two_files_claiming_a_year_is_reported_as_a_duplicate_source():
+    """A client folder holds more than the client's statements.
+
+    TS Distributors' folder keeps Weaver's own 2020-2025 working consolidation
+    beside the five yearly client files, so two sources cover FY2025. Telling
+    the analyst to "name the entity being valued" sends them looking for
+    something that does not exist; the fix is to leave one file out.
+    """
+    ss = StatementSet()
+    ss.add(col(entity=None, sheet="Sheet1", file="Dec 2020 -2025 (Weaver edited).xlsx"))
+    ss.add(col(entity=None, sheet="Sheet1", file="Dec 2025 Financials.xlsx"))
+
+    findings = select_scope(ss)
+
+    assert [f.code for f in findings] == ["duplicate_source"]
+    assert findings[0].severity.value == "error"
+    assert "Dec 2025 Financials.xlsx" in findings[0].message
+    assert "entity" not in findings[0].message.lower()
+
+
+def test_named_entities_are_still_an_entity_question():
+    ss = StatementSet()
+    ss.add(col(entity="Alpha", sheet="Alpha", file="group.xlsx"))
+    ss.add(col(entity="Beta", sheet="Beta", file="group.xlsx"))
+    findings = select_scope(ss)
+    assert [f.code for f in findings] == ["entity_scope_ambiguous"]
+
+
+def test_two_tabs_of_one_file_are_not_a_duplicate_file():
+    """Same workbook, unnamed tabs: still a scope question, not a stray file."""
+    ss = StatementSet()
+    ss.add(col(entity=None, sheet="Sheet1", file="one.xlsx"))
+    ss.add(col(entity=None, sheet="Sheet2", file="one.xlsx"))
+    findings = select_scope(ss)
+    assert [f.code for f in findings] == ["entity_scope_ambiguous"]

@@ -55,6 +55,16 @@ EXPLANATIONS: dict[str, Explanation] = {
         "smaller than they are.",
         "Use the full-year statement for this year, or exclude the period.",
     ),
+    "duplicate_source": Explanation(
+        "Two files contain the same year",
+        "A client folder often holds more than the statements -- last year's "
+        "working consolidation, a draft schedule, a file saved twice. When two "
+        "of them cover the same year we cannot tell which is the one to value "
+        "from, and picking wrong uses the wrong version of the year.",
+        "Look at the file names listed above and untick the one that is not the "
+        "client's own statement, in the file list on the main screen. Then read "
+        "the statements again.",
+    ),
     "entity_scope_ambiguous": Explanation(
         "Two sources claim the same year, and it is not clear which to use",
         "Either one file holds several companies' books and it is unclear which "

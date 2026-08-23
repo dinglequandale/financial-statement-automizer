@@ -181,20 +181,38 @@ def select_scope(ss: StatementSet, preferred: str | None = None) -> list[Finding
             )
         else:
             winner = cols[0]
+            # Two different failures wear the same shape. When no claimant
+            # names an entity, the clash is between *files* -- a client folder
+            # holding last year's working consolidation beside this year's
+            # statements -- and the remedy is to leave one out, not to name a
+            # company. Saying "put it in the Reporting entity box" there sends
+            # the analyst looking for something that does not exist.
+            same_file = len({c.source_file for c in cols}) > 1
+            no_entities = not any(c.entity for c in cols)
             findings.append(
                 Finding(
                     severity=Severity.ERROR,
-                    code="entity_scope_ambiguous",
+                    code="duplicate_source" if (same_file and no_entities)
+                    else "entity_scope_ambiguous",
                     message=(
-                        f"{st.value} FY{year}: {len(cols)} sources claim this year "
-                        f"({names}) and "
-                        + (
-                            f"{len(rollups)} of them look like roll-ups"
-                            if rollups
-                            else "none of them names itself a roll-up"
+                        (
+                            f"{st.value} FY{year}: two files both contain this year "
+                            f"({names}). Provisionally using {_label(winner)!r} -- "
+                            f"leave the other one out if it is not the client's own "
+                            f"statement for the year."
                         )
-                        + f". Provisionally using {_label(winner)!r} -- confirm which "
-                        f"entity is being valued before relying on this year."
+                        if (same_file and no_entities)
+                        else (
+                            f"{st.value} FY{year}: {len(cols)} sources claim this year "
+                            f"({names}) and "
+                            + (
+                                f"{len(rollups)} of them look like roll-ups"
+                                if rollups
+                                else "none of them names itself a roll-up"
+                            )
+                            + f". Provisionally using {_label(winner)!r} -- confirm "
+                            f"which entity is being valued before relying on this year."
+                        )
                     ),
                     statement=st,
                     fiscal_year=year,

@@ -115,6 +115,9 @@ class Job:
     template: str
     profile: str
     scope: str
+    #: Files the analyst unticked. Named rather than pruned from disk: the
+    #: client's folder is theirs, and a run should never require editing it.
+    excludes: tuple[str, ...] = ()
 
     @property
     def directory(self) -> Path:
@@ -209,6 +212,55 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
     row("Reporting entity", "scope",
         "Only needed when one file holds several companies. Leave blank at first.")
 
+    # Which files to read. A client folder routinely holds things that are not
+    # the client's statements -- a prior year's working consolidation, a draft
+    # schedule, a cover letter -- and two of them can claim the same year. The
+    # analyst is the only one who knows which is authoritative, so show what was
+    # found and let them untick it. Typing a filename would be worse.
+    files_frame = ttk.LabelFrame(outer, text=" Files found — untick anything that is not the client's statements ",
+                                 padding=(10, 8))
+    files_frame.pack(fill="x", pady=(12, 0))
+    files_canvas = tk.Canvas(files_frame, height=104, highlightthickness=0,
+                             background=root.cget("background"))
+    files_scroll = ttk.Scrollbar(files_frame, orient="vertical", command=files_canvas.yview)
+    files_inner = ttk.Frame(files_canvas)
+    files_inner.bind("<Configure>",
+                     lambda e: files_canvas.configure(scrollregion=files_canvas.bbox("all")))
+    files_canvas.create_window((0, 0), window=files_inner, anchor="nw")
+    files_canvas.configure(yscrollcommand=files_scroll.set)
+    files_canvas.pack(side="left", fill="both", expand=True)
+    files_scroll.pack(side="right", fill="y")
+    file_vars: dict[str, tk.BooleanVar] = {}
+
+    def refresh_files(*_a) -> None:
+        for child in files_inner.winfo_children():
+            child.destroy()
+        file_vars.clear()
+        folder = Path(fields["inputs"].get().strip() or ".")
+        if not folder.is_dir():
+            ttk.Label(files_inner, text="Choose a folder above to see what is in it.",
+                      style="Hint.TLabel").pack(anchor="w")
+            return
+        from fsa.job import READABLE
+
+        found = sorted(
+            f for f in folder.iterdir()
+            if f.is_file() and f.suffix.lower() in READABLE and not f.name.startswith("~$")
+        )
+        if not found:
+            ttk.Label(files_inner, text="No statements found in that folder.",
+                      style="Hint.TLabel").pack(anchor="w")
+            return
+        for f in found:
+            var = tk.BooleanVar(value=True)
+            file_vars[f.name] = var
+            size = f.stat().st_size / 1024
+            ttk.Checkbutton(files_inner, variable=var,
+                            text=f"{f.name}   ({size:,.0f} KB)").pack(anchor="w")
+
+    fields["inputs"].trace_add("write", refresh_files)
+    refresh_files()
+
     buttons = ttk.Frame(outer)
     buttons.pack(fill="x", pady=(12, 8))
     go = ttk.Button(buttons, text="Read the statements", style="Go.TButton")
@@ -282,6 +334,7 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
                 profile_path=Path(job.profile) if job.profile else None,
                 use_llm=True,
                 scope=job.scope or None,
+                excludes=list(job.excludes),
             )
             summary = summarize(res.report)
             lines = []
@@ -318,8 +371,11 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
             events.put(("failed", (friendly, traceback.format_exc())))
 
     def start_prepare() -> None:
-        job = Job(**{k: fields[k].get().strip() for k in
-                     ("client", "inputs", "template", "profile", "scope")})
+        job = Job(
+            **{k: fields[k].get().strip() for k in
+               ("client", "inputs", "template", "profile", "scope")},
+            excludes=tuple(n for n, v in file_vars.items() if not v.get()),
+        )
         if not job.inputs or not Path(job.inputs).is_dir():
             messagebox.showwarning(APP_NAME, "Choose the folder holding the client's statements.")
             return
