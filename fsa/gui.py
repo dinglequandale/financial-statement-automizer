@@ -147,6 +147,7 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
     style.configure("Step.TLabel", font=("Segoe UI Semibold", 10))
     style.configure("Hint.TLabel", foreground="#5a6672")
     style.configure("Go.TButton", font=("Segoe UI Semibold", 10))
+    style.configure("Warn.TLabel", foreground="#9a6206")
 
     outer = ttk.Frame(root, padding=16)
     outer.pack(fill="both", expand=True)
@@ -217,10 +218,19 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
     # schedule, a cover letter -- and two of them can claim the same year. The
     # analyst is the only one who knows which is authoritative, so show what was
     # found and let them untick it. Typing a filename would be worse.
-    files_frame = ttk.LabelFrame(outer, text=" Files found — untick anything that is not the client's statements ",
-                                 padding=(10, 8))
+    files_frame = ttk.LabelFrame(
+        outer,
+        text=" Files found — untick anything that is not the client's own statements ",
+        padding=(10, 8),
+    )
     files_frame.pack(fill="x", pady=(12, 0))
-    files_canvas = tk.Canvas(files_frame, height=104, highlightthickness=0,
+    files_hint = ttk.Label(
+        files_frame,
+        text="Client folders often hold more than the statements. Anything ticked will be read.",
+        style="Hint.TLabel",
+    )
+    files_hint.pack(anchor="w", pady=(0, 6))
+    files_canvas = tk.Canvas(files_frame, height=132, highlightthickness=0,
                              background=root.cget("background"))
     files_scroll = ttk.Scrollbar(files_frame, orient="vertical", command=files_canvas.yview)
     files_inner = ttk.Frame(files_canvas)
@@ -231,15 +241,51 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
     files_canvas.pack(side="left", fill="both", expand=True)
     files_scroll.pack(side="right", fill="y")
     file_vars: dict[str, tk.BooleanVar] = {}
+    scan_token = {"n": 0}
 
-    def refresh_files(*_a) -> None:
+    def _render_files(scans, folder_text: str) -> None:
+        """Draw the list. Called with names only first, then again with detail."""
         for child in files_inner.winfo_children():
             child.destroy()
+        if not scans:
+            ttk.Label(files_inner, text=folder_text, style="Hint.TLabel").pack(anchor="w")
+            return
+        for item in scans:
+            name = item["name"]
+            var = file_vars.get(name) or tk.BooleanVar(value=True)
+            file_vars[name] = var
+            line = ttk.Frame(files_inner)
+            line.pack(anchor="w", fill="x")
+            ttk.Checkbutton(
+                line, variable=var,
+                text=f"{name}   ({item['size']:,.0f} KB)   {item['summary']}",
+            ).pack(anchor="w")
+            for note in item.get("overlaps", ()):
+                ttk.Label(line, text=f"        also covers years another file covers — {note}",
+                          style="Warn.TLabel").pack(anchor="w")
+
+    def scan_worker(folder: Path, token: int) -> None:
+        from fsa.scan import scan_folder
+
+        try:
+            scans = scan_folder(folder)
+        except Exception:  # noqa: BLE001 - a survey must never break the form
+            events.put(("scanned", (token, None)))
+            return
+        events.put((
+            "scanned",
+            (token, [
+                {"name": x.name, "size": x.size_kb, "summary": x.summary,
+                 "overlaps": list(x.overlaps)}
+                for x in scans
+            ]),
+        ))
+
+    def refresh_files(*_a) -> None:
         file_vars.clear()
         folder = Path(fields["inputs"].get().strip() or ".")
         if not folder.is_dir():
-            ttk.Label(files_inner, text="Choose a folder above to see what is in it.",
-                      style="Hint.TLabel").pack(anchor="w")
+            _render_files([], "Choose a folder above to see what is in it.")
             return
         from fsa.job import READABLE
 
@@ -248,15 +294,18 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
             if f.is_file() and f.suffix.lower() in READABLE and not f.name.startswith("~$")
         )
         if not found:
-            ttk.Label(files_inner, text="No statements found in that folder.",
-                      style="Hint.TLabel").pack(anchor="w")
+            _render_files([], "No statements found in that folder.")
             return
-        for f in found:
-            var = tk.BooleanVar(value=True)
-            file_vars[f.name] = var
-            size = f.stat().st_size / 1024
-            ttk.Checkbutton(files_inner, variable=var,
-                            text=f"{f.name}   ({size:,.0f} KB)").pack(anchor="w")
+        # Names immediately so the form never feels stuck; what each one holds
+        # arrives a moment later from a background read.
+        _render_files(
+            [{"name": f.name, "size": f.stat().st_size / 1024, "summary": "reading…"}
+             for f in found],
+            "",
+        )
+        scan_token["n"] += 1
+        threading.Thread(target=scan_worker, args=(folder, scan_token["n"]),
+                         daemon=True).start()
 
     fields["inputs"].trace_add("write", refresh_files)
     refresh_files()
@@ -432,6 +481,13 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
         try:
             while True:
                 kind, payload = events.get_nowait()
+
+                if kind == "scanned":
+                    token, scans = payload
+                    # Ignore a scan whose folder has since been changed.
+                    if token == scan_token["n"] and scans is not None:
+                        _render_files(scans, "")
+                    continue
 
                 if kind == "prepared":
                     summary, tables, detail, review_path, rendered = payload
