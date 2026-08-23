@@ -94,6 +94,16 @@ class ReviewStats:
     excluded: int = 0
     unresolved_left: int = 0
     notes: list[str] = field(default_factory=list)
+    #: One record per reviewed row: what was proposed, how sure the tool was,
+    #: and what the analyst did about it.
+    #:
+    #: Confirming a row overwrites its confidence with 1.0, which is right for
+    #: the profile and destroys the only evidence that could ever tell us
+    #: whether the tool's confidence means anything. Without this, a completed
+    #: engagement says what the analyst changed but never whether the tool knew
+    #: it was unsure -- and that is the number that decides how many rows it is
+    #: entitled to ask about at all.
+    deltas: list[dict] = field(default_factory=list)
 
 
 def _latest_amount(table: ConsolidatedTable, norm: str) -> float | None:
@@ -329,6 +339,17 @@ def import_review(
                 continue
 
             stats.total += 1
+            proposed = "" if rule.decided_by is Decider.UNRESOLVED else rule.target.label
+            before = {
+                "account": account,
+                "proposed": proposed,
+                "confidence": round(rule.confidence, 3),
+                "proposed_by": rule.decided_by.value,
+                "statement": st.value,
+            }
+
+            def _record(action: str, chose: str) -> None:
+                stats.deltas.append({**before, "action": action, "chose": chose})
 
             if chosen == EXCLUDE_TOKEN:
                 new.exclusions.append(
@@ -341,17 +362,20 @@ def import_review(
                     )
                 )
                 stats.excluded += 1
+                _record("excluded", EXCLUDE_TOKEN)
                 continue
 
             if not chosen:
                 rule.decided_by = Decider.UNRESOLVED
                 new.rules.append(rule)
                 stats.unresolved_left += 1
+                _record("left blank", "")
                 continue
 
             was = rule.target.label if rule.decided_by is not Decider.UNRESOLVED else ""
             if normalize(chosen) != normalize(was):
                 stats.changed += 1
+                _record("changed", chosen)
                 line = spec.find(st, chosen)
                 if line is not None and line.is_target:
                     kind, block = TargetKind.ASSIGN, None
@@ -373,6 +397,7 @@ def import_review(
                 rule.rationale = f"analyst override (was {was or 'unresolved'})"
             else:
                 stats.accepted += 1
+                _record("accepted", chosen)
 
             rule.decided_by = Decider.HUMAN
             rule.confidence = 1.0

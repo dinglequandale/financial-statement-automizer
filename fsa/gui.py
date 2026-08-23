@@ -73,6 +73,41 @@ def reveal(path: Path) -> None:
         pass
 
 
+#: The small files that describe an engagement: what was read, what the tool
+#: proposed, what the analyst decided, and every note raised along the way.
+#: Deliberately not the finished model or the review workbook -- those are the
+#: analyst's work product and are large; none of them is needed to learn how
+#: the tool should have behaved.
+FEEDBACK_FILES = (
+    "job.json",
+    "findings.json",
+    "proposed.yaml",
+    "decisions.yaml",
+    "review_log.json",
+)
+
+
+def package_job(job_dir: Path, client: str) -> Path:
+    """Zip an engagement's record so it can be sent back in one piece.
+
+    The difference between `proposed.yaml` and `decisions.yaml` is the record
+    of every correction the analyst made, and `review_log.json` adds how sure
+    the tool had been about each one. Together they are what turns a real
+    engagement into evidence; the point of a button is that nobody has to
+    remember which five files that means.
+    """
+    import zipfile
+
+    safe = "".join(c for c in client if c.isalnum() or c in " -_.").strip() or "job"
+    out = job_dir.parent / f"{safe} - {job_dir.name} - feedback.zip"
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        for name in FEEDBACK_FILES:
+            f = job_dir / name
+            if f.is_file():
+                z.write(f, arcname=name)
+    return out
+
+
 @dataclass
 class Job:
     client: str
@@ -203,6 +238,9 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
     build_btn = ttk.Button(finish_buttons, text="Write the model",
                            style="Go.TButton", state="disabled")
     build_btn.pack(side="left", padx=(8, 0))
+    send_btn = ttk.Button(finish_buttons, text="Package this job to send",
+                          state="disabled")
+    send_btn.pack(side="left", padx=(8, 0))
 
     # ---------------------------------------------------------------- output
 
@@ -301,6 +339,21 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
         busy(True)
         threading.Thread(target=prepare_worker, args=(job,), daemon=True).start()
 
+    def package() -> None:
+        job = state["job"]
+        if job is None:
+            return
+        try:
+            out = package_job(job.directory, job.client)
+        except Exception as exc:  # noqa: BLE001
+            messagebox.showwarning(APP_NAME, "Could not package the job: " + str(exc))
+            return
+        say()
+        say(f"Packaged for sending: {out}", "ok")
+        say("    It holds what was read, what the tool suggested, what you")
+        say("    changed, and the notes raised along the way. Not the model.")
+        reveal(out.parent)
+
     def start_build() -> None:
         job = state["job"]
         if job is None:
@@ -312,6 +365,7 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
 
     go.configure(command=start_prepare)
     build_btn.configure(command=start_build)
+    send_btn.configure(command=package)
     open_review.configure(
         command=lambda: reveal(state["job"].directory / "review.xlsx") if state["job"] else None
     )
@@ -360,6 +414,7 @@ def run_gui() -> int:  # noqa: C901 - a form is a form
                         say(f"    {year}: {'balances' if ok else f'out by {diff:,.2f}'}",
                             None if ok else "stop")
                     say(f"    {out}")
+                    send_btn.configure(state="normal")
                     reveal(out.parent)
 
                 elif kind == "failed":

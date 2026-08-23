@@ -76,3 +76,57 @@ def test_the_window_builds_every_widget():
     finally:
         tk.Tk.mainloop = real_mainloop
     assert built.get("ok"), "run_gui returned without ever reaching mainloop"
+
+
+# --------------------------------------------------------------------------
+# sending an engagement back
+# --------------------------------------------------------------------------
+
+
+def test_packaging_collects_the_record_and_not_the_work_product(tmp_path):
+    """What comes back should describe the engagement, not carry the model.
+
+    The difference between `proposed.yaml` and `decisions.yaml` is every
+    correction the analyst made; `review_log.json` adds how sure the tool had
+    been about each one. That is the whole point of asking for a file back.
+    """
+    import zipfile
+
+    job_dir = tmp_path / "Acme" / "2026-01-01"
+    job_dir.mkdir(parents=True)
+    for name in gui.FEEDBACK_FILES:
+        (job_dir / name).write_text("{}", encoding="utf-8")
+    (job_dir / "review.xlsx").write_bytes(b"x" * 5000)
+    (job_dir / "Acme BVAL Model.xlsx").write_bytes(b"x" * 900_000)
+
+    out = gui.package_job(job_dir, "Acme Flooring, Inc.")
+
+    assert out.exists()
+    with zipfile.ZipFile(out) as z:
+        held = set(z.namelist())
+    assert held == set(gui.FEEDBACK_FILES)
+    assert "review.xlsx" not in held
+    assert not any(n.endswith("BVAL Model.xlsx") for n in held)
+
+
+def test_packaging_a_job_that_was_never_built_still_works(tmp_path):
+    """An analyst who stops after reading should still be able to send it."""
+    import zipfile
+
+    job_dir = tmp_path / "Acme" / "2026-01-01"
+    job_dir.mkdir(parents=True)
+    (job_dir / "job.json").write_text("{}", encoding="utf-8")
+    (job_dir / "findings.json").write_text("{}", encoding="utf-8")
+
+    out = gui.package_job(job_dir, "Acme")
+    with zipfile.ZipFile(out) as z:
+        assert set(z.namelist()) == {"job.json", "findings.json"}
+
+
+def test_the_package_lands_beside_the_job_and_names_the_client(tmp_path):
+    job_dir = tmp_path / "Acme" / "2026-01-01"
+    job_dir.mkdir(parents=True)
+    (job_dir / "job.json").write_text("{}", encoding="utf-8")
+    out = gui.package_job(job_dir, "Acme Flooring, Inc.")
+    assert out.parent == job_dir.parent
+    assert "Acme Flooring Inc." in out.name and out.name.endswith("feedback.zip")

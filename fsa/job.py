@@ -51,6 +51,7 @@ READABLE = {".pdf", ".xlsx", ".xls", ".ods"}
 JOB_FILE = "job.json"
 PROPOSED_FILE = "proposed.yaml"
 REVIEW_FILE = "review.xlsx"
+REVIEW_LOG_FILE = "review_log.json"
 FINDINGS_FILE = "findings.json"
 
 STATEMENTS = (StatementType.BS, StatementType.IS)
@@ -490,6 +491,25 @@ def build(
         saved_to.parent.mkdir(parents=True, exist_ok=True)
         save_profile(_as_profile(state.client_name, template, confirmed), saved_to)
 
+
+    # What the analyst actually did, row by row. Kept beside the model rather
+    # than inside it, so a finished engagement can be sent back whole and read
+    # without opening Excel.
+    (job_dir / REVIEW_LOG_FILE).write_text(
+        json.dumps(
+            {
+                "client": state.client_name,
+                "reviewed": date.today().isoformat(),
+                "accepted": stats.accepted,
+                "changed": stats.changed,
+                "excluded": stats.excluded,
+                "left_blank": stats.unresolved_left,
+                "rows": stats.deltas,
+            },
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
     return BuildResult(
         out_path=report.out_path,
         stats=stats,

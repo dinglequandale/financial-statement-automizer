@@ -25,6 +25,27 @@ writes the model once you have corrected column D.
 Everything it produces goes in `Documents\BVAL Models\<client>\<date>`. You
 never have to choose a folder.
 
+### When you are done
+
+Press **Package this job to send**. It makes one small zip beside the job
+folder holding what was read, what the tool suggested, what you changed, and
+the notes it raised. Not the model -- that is yours.
+
+Send that file back. The gap between what was suggested and what you chose is
+how the tool learns which lines you actually want broken out.
+
+### One thing to watch for
+
+If a client sends **one spreadsheet with every year side by side** -- 2019 in
+one column, 2020 in the next -- the tool currently reads the first column only,
+and says so:
+
+> *A file lays out several columns and only the first was read.*
+
+If those column headings are dates or years, stop and send that file on rather
+than building from it. If they are company names (a group with subsidiaries),
+nothing is missing and you can carry on.
+
 **It stops rather than guesses.** If a year's figures do not add up, if one
 period covers eight months instead of twelve, or if a file holds several
 companies and it cannot tell which one you are valuing, it says so in plain
